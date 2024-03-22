@@ -7,7 +7,11 @@ import os
 from sqlalchemy import text
 import var_dump as vd
 from dw import get_dw
+from insert_sensor_metadata import insert_sensor_metadata
 
+''' Ennen MQTT Brokerista vastaanotettavien viestien käsittelemistä ja 
+lisäämistä lisätään tietueet sensors_dim-tauluun.'''
+insert_sensor_metadata()
 
 # MQTT-VIESTIN KÄSITTELY ######################################################
 
