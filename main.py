@@ -15,7 +15,7 @@ username = os.environ.get("UN")
 password = os.environ.get("PW")
 host = os.environ.get("HOST")
 
-'''Jos autorisointiongelmia ilmenee, tarkistetaan että ympäristömuuttujiin 
+'''Jos autorisointiongelmia ilmenee, tarkistetaan että ympäristömuuttujista 
 on haettu oikeat arvot:'''
 print(topic)
 print(username)
@@ -44,10 +44,19 @@ def on_message(client, userdata, msg):
          yksikkömuunnoksen osamäärää (ei käytetä Python integer 
          divisionia).  '''
         ts_in_sec = payload['ts'] / 1000
-        '''Muunnetaan sekuntimuotoinen epoch päivämääräksi. Päivämäärän 
-         eri osat saadaan dt-muuttujaan tallennetusta päivämäärästä irti 
-         pistenotaation avulla (dt.year, dt.isocalendar().week).'''
+        # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
         dt = datetime.fromtimestamp(ts_in_sec)
+
+        # Irroitetaan päivämäärän eri osat pistenotaation avulla:
+        year = dt.year
+        month = dt.month
+        week = dt.isocalendar().week
+        day = dt.day
+        hour = dt.hour
+        min = dt.minute
+        sec = dt.second
+        ms = dt.microsecond
+
         '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
         viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
         nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
@@ -56,22 +65,31 @@ def on_message(client, userdata, msg):
         device = tuple(payload['d'].keys())[0]
         # Haetaan tietosisällöstä tiedot laitteen sensoreista:
         sensor_data = payload['d'][device]
-        # Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste
-        sensor = tuple(sensor_data.keys())[0]
-        '''Koska laitteissa voi olla useampia sensoreita, pitäisi laitteen 
-         sensoreiden nimet/tunnisteet hakea silmukassa, jossa myös parsitut 
-         tiedot tallennettaisiin tietokantaan alla kommentoidulla tavalla. '''
-        # sensors = list(tuple(sensor_data.keys()))
-        # for sensor in sensors:
-        #     value = sensor['v']
-        #     # INSERT --> sensor, value ja dt pilkottuna
-        value = sensor_data[sensor]['v']
-        print(f"Sensori: {sensor} | arvo: {value} | mittaushetki: {dt}")
-
-        #######################################################################
-        ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
-        osa-arvojen lisäys tietokantaan'''
-        #######################################################################        
+        # Haetaan laitteen sensoreiden nimet/tunnisteet:
+        sensor_names = list(tuple(sensor_data.keys()))
+        print(f"Uusi viesti:")
+        '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
+         sensoreiden arvot silmukassa. Lisätään samalla kunkin 
+         sensorin tiedot tietokantaan.'''
+        for sensor_name in sensor_names:
+            sensor_value = sensor_data[sensor_name]['v']
+            print(f"LAITE: {device} | SENSORI: {sensor_name} | ARVO: {sensor_value} | MITTAUSHETKI: {year}/{month}/{week}/{day}/{hour}/{min}/{sec}/{ms}")
+            ###################################################################
+            ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
+            osa-arvojen lisäys tietokantaan'''
+            ###################################################################             
+        # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste 
+        # Juhanin tavalla, joka hakee ainoastaan laitteen ensimmäisen sensorin 
+        # arvoineen'''
+        # sensorJ = tuple(sensor_data.keys())[0]
+        # # Haetaan laitteessa olevan sensorin arvo:
+        # valueJ = sensor_data[sensorJ]['v']
+        # print(f"Sensori: {sensorJ} | arvo: {valueJ} | mittaushetki: {dt}")
+        # #######################################################################
+        # ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
+        # osa-arvojen lisäys tietokantaan'''
+        # ####################################################################### 
+        print()       
     except Exception as e:
         print(e)
 
