@@ -4,50 +4,9 @@ import paho.mqtt.client as mqtt
 import json
 from dotenv import load_dotenv
 import os
+from sqlalchemy import text
 import var_dump as vd
-
-# TIETORAKENTEEN HAKU METADATASTA #############################################
-sensor_list = []
-
-with open('coolbox_metadata.json', 'r', encoding='UTF-8') as config_file:
-    '''Muuetaan coolbox_metadatan sisältö dictionaryksi ja luetaan 
-    dictionary metadata-muuttujaan:'''
-    metadata = json.loads(config_file.read())
-    devices = metadata['devices']
-    '''Python-dictionarylla on keys-niminen funktio, jolla saadaan 
-    kaikki dictionaryn avaimet'''
-    device_ids = devices.keys()
-    for device_id in device_ids:
-        # # Tarkistetaan, onko avain sellainen, jota ei voi kääntää numeroksi:
-        # # Ei kuitenkaan käytetä toimintoa, koska esimerkiksi aurinkopaneelin
-        # # laite-id on merkkijono
-        # if not device_id.isnumeric():
-        #     continue
-        # Get on turvallisempi käyttää kuin devices[device_id], koska se ei kaadu, jos device_id on esim. null
-        device = devices.get(device_id)
-        # Laitteen nimi on sd-avaimen arvo:
-        device_name = device['sd']
-        sensors = device['sensors']
-        if sensors == {}:
-            continue
-        sensor_ids = sensors.keys()
-        # Esim. palovaroittimessa on kolme sensoria
-        for sensor_id in sensor_ids:
-            sensor_info = sensors.get(sensor_id)
-            # Jos sensorista puuttuu yksikkö, hypätään sen yli
-            if "unit" not in sensor_info:
-                continue
-            sensor_list.append({
-                "device_id": device_id,
-                "device_name": device_name,
-                "sensor_id": sensor_id,
-                "sensor_description": sensor_info["sd"],
-                "unit": sensor_info["unit"]
-            })
-
-# print(vd.var_dump(sensor_list))
-# print("\n", "ALKIOITA:", len(sensor_list))
-###############################################################################
+from dw import get_dw
 
 
 # MQTT-VIESTIN KÄSITTELY ######################################################
@@ -78,77 +37,104 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe(topic)
 
 
+def _get_dates_dims(_dw):
+    _query = text("SELECT * FROM dates_dim;")
+    rows = _dw.execute(_query).mappings().all()
+    return rows
+
+
+def _get_sensors_dims(_dw):
+    _query = text("SELECT sensor_id, device_id FROM sensors_dim;")
+    rows = _dw.execute(_query).mappings().all()
+    return rows
+
+
+def _get_dates_key(msg_dt, dates):
+    for d_dim in dates:
+        if msg_dt.year == d_dim["year"] and msg_dt.month == d_dim["month"] and msg_dt.isocalendar().week == d_dim[
+            "week"] and msg_dt.day == d_dim["day"] and msg_dt.hour == d_dim["hour"] and msg_dt.minute == d_dim[
+            "min"] and msg_dt.second == d_dim["sec"] and msg_dt.microsecond == d_dim["ms"]:
+            return d_dim["date_key"]
+    return None
+
+
+def _get_sensors_key(msg_sensor_id, msg_device_id, sensors_from_dw):
+    for s in sensors_from_dw:
+        if msg_sensor_id == s["sensor_id"] and msg_device_id == s["device_id"]:
+            return s["sensor_key"]
+    return None
+
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     try:
-        # Muutetaan yksittäisen viestin tietosisältö dictionary-muotoon
-        payload = json.loads(msg.payload)
-        '''Muutetaan aikaleima/epoch luettavaan päivämäärämuotoon. Koska 
-         muunnoksessa käytetään datetimen fromtimestamp-funktiota, on 
-         aikaleima muutettava ensin millisekunneista sekunneiksi. Koska 
-         tietokannassa on sarake myös mikrosekunneille, ei pyöristetä 
-         yksikkömuunnoksen osamäärää (ei käytetä Python integer 
-         divisionia).  '''
-        ts_in_sec = payload['ts'] / 1000
-        # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
-        dt = datetime.fromtimestamp(ts_in_sec)
+        with get_dw() as _dw:
+            try:
+                # Muutetaan yksittäisen viestin tietosisältö dictionary-muotoon
+                payload = json.loads(msg.payload)
+                '''Muutetaan aikaleima/epoch luettavaan päivämäärämuotoon. Koska 
+                 muunnoksessa käytetään datetimen fromtimestamp-funktiota, on 
+                 aikaleima muutettava ensin millisekunneista sekunneiksi. Koska 
+                 tietokannassa on sarake myös mikrosekunneille, ei pyöristetä 
+                 yksikkömuunnoksen osamäärää (ei käytetä Python integer 
+                 divisionia).  '''
+                ts_in_sec = payload['ts'] / 1000
+                # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
+                dt = datetime.fromtimestamp(ts_in_sec)
+                _dates_dim_query = text("INSERT INTO dates_dim VALUES (year, month, week, day, hour, min, sec, "
+                                        "ms) VALUES (:year, :month, :week, :day, :hour, :min, :sec, :ms)")
+                # Irroitetaan päivämäärän eri osat pistenotaation avulla:
+                _dw.execute(_dates_dim_query,
+                            {"year": dt.year, "month": dt.month, "week": dt.isocalendar().week, "day": dt.day,
+                             "hour": dt.hour, "min": dt.minute, "sec": dt.second, "ms": dt.microsecond})
+                '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
+                viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
+                nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
+                olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi 
+                tuplen ainoasta eli ensimmäisestä alkiosta.'''
+                device_id_msg = tuple(payload['d'].keys())[0]
+                # Haetaan tietosisällöstä tiedot laitteen sensoreista:
+                sensor_data = payload['d'][device_id_msg]
+                # Haetaan laitteen sensoreiden nimet/tunnisteet:
+                sensor_ids_msg = list(tuple(sensor_data.keys()))
+                '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
+                 sensoreiden arvot silmukassa. Lisätään samalla kunkin 
+                 sensorin tiedot tietokantaan.'''
+                for sensor_id_msg in sensor_ids_msg:
+                    sensor_value = sensor_data[sensor_id_msg]['v']
+                    # print(f"LAITE_ID: {device_id_msg} | SENSORI_ID: {sensor_id_msg} | ARVO: {sensor_value} | "
+                    #       f"MITTAUSHETKI: dt")
+                    dates_dim = _get_dates_dims(_dw)
+                    sensors_dim = _get_sensors_dims(_dw)
+                    _date_key = _get_dates_key(dt, dates_dim)
+                    _sensor_key = _get_sensors_key(sensor_id_msg, device_id_msg, sensors_dim)
 
-        # Irroitetaan päivämäärän eri osat pistenotaation avulla:
-        year = dt.year
-        month = dt.month
-        week = dt.isocalendar().week
-        day = dt.day
-        hour = dt.hour
-        min = dt.minute
-        sec = dt.second
-        ms = dt.microsecond
+                    if _date_key is None or _sensor_key is None:
+                        continue
 
-        '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
-        viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
-        nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
-        olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi 
-        tuplen ainoasta eli ensimmäisestä alkiosta.'''
-        device_id_msg = tuple(payload['d'].keys())[0]
-        # Haetaan tietosisällöstä tiedot laitteen sensoreista:
-        sensor_data = payload['d'][device_id_msg]
-        # Haetaan laitteen sensoreiden nimet/tunnisteet:
-        sensor_ids_msg = list(tuple(sensor_data.keys()))
-        '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
-         sensoreiden arvot silmukassa. Lisätään samalla kunkin 
-         sensorin tiedot tietokantaan.'''
-        for sensor_id_msg in sensor_ids_msg:
-            sensor_value = sensor_data[sensor_id_msg]['v']
-            # print(f"LAITE_ID: {device_id_msg} | SENSORI_ID: {sensor_id_msg} | ARVO: {sensor_value} | MITTAUSHETKI: {year}/{month}/{week}/{day}/{hour}/{min}/{sec}/{ms}")
-            for sensor_metadata in sensor_list:
-                if sensor_metadata["sensor_id"] == sensor_id_msg and sensor_metadata["device_id"] == device_id_msg:
-                    print("sensors_dim-tauluun lisättävät tiedot saapuneesta viestistä:")
-                    print("sensor_key: tietokanta hoitaa")
-                    print(f"sensor_id: {sensor_id_msg}")
-                    print(f"sensor_name: {sensor_metadata['sensor_description']}")
-                    print(f"device_id: {device_id_msg}")
-                    print(f"device_name: {sensor_metadata['device_name']}")
-                    print(f"unit: {sensor_metadata['unit']}")
-                    print()
-                    print("measurements_fact-tauluun lisättävä tieto saapuneesta viestistä:")
-                    print(f"value: {sensor_value}")
-                    print("\n" + "-----------------------------------------------------------------" + "\n")
-            ###################################################################
-            ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
-            osa-arvojen lisäys tietokantaan'''
-            ###################################################################
-        # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste 
-        # Juhanin tavalla, joka hakee ainoastaan laitteen ensimmäisen sensorin 
-        # arvoineen'''
-        # sensorJ = tuple(sensor_data.keys())[0]
-        # # Haetaan laitteessa olevan sensorin arvo:
-        # valueJ = sensor_data[sensorJ]['v']
-        # print(f"Sensori: {sensorJ} | arvo: {valueJ} | mittaushetki: {dt}")
-        # #######################################################################
-        # ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
-        # osa-arvojen lisäys tietokantaan'''
-        # #######################################################################
-    except Exception as e:
-        print(e)
+                    _measurement_fact_query = text("INSERT INTO measurements_fact (sensor, date, value) "
+                                                   "VALUES (:sensor, :date, :value)")
+                    _dw.execute(_measurement_fact_query,
+                                {"sensor": _sensor_key, "date": _date_key, "value": sensor_value})
+                _dw.commit()
+
+                # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste
+                # Juhanin tavalla, joka hakee ainoastaan laitteen ensimmäisen sensorin
+                # arvoineen'''
+                # sensorJ = tuple(sensor_data.keys())[0]
+                # # Haetaan laitteessa olevan sensorin arvo:
+                # valueJ = sensor_data[sensorJ]['v']
+                # print(f"Sensori: {sensorJ} | arvo: {valueJ} | mittaushetki: {dt}")
+                # #######################################################################
+                # ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan
+                # osa-arvojen lisäys tietokantaan'''
+                # #######################################################################
+            except Exception as e1:
+                print(e1)
+                _dw.rollback()
+                raise e1
+    except Exception as e2:
+        print(e2)
 
 
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

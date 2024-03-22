@@ -18,8 +18,11 @@ Ympäristömuuttujat:
 - kopioi sinne seuraavat muuttujat:
 
 TOPIC=anna/topic/jonka/rakenne/nayttaa/talta
+
 UN=kayttajatunnus
+
 PW=salasanajossamyoserikoismerkki
+
 HOST=URImuotoa.oleva.osoite
 
 - vaihda muuttujien placeholder-arvot MQTT-videossa suoraan main.py-tiedostoon merkattuihin arvoihin ilman lainausmerkkejä
