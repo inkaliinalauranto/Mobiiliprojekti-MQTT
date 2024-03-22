@@ -1,0 +1,1726 @@
+{
+  "devices": {
+    "1": {
+      "sd": "MainHubController",
+      "sensors": {},
+      "ld": "MainHubController"
+    },
+    "22": {
+      "sd": "SmokeDetector",
+      "sensors": {
+        "22_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "22_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "22_113_0_SmokeAlarm_SensorStatus": {
+          "sd": "SmokeAlarm_SensorStatus",
+          "unit": ""
+        }
+      },
+      "ld": "SmokeDetector "
+    },
+    "29": {
+      "sd": "TB_CODetector",
+      "sensors": {
+        "29_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "29_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "29_113_0_COAlarm_SensorStatus": {
+          "sd": "COAlarm_SensorStatus",
+          "unit": ""
+        }
+      },
+      "ld": "TB_CODetector"
+    },
+    "35": {
+      "sd": "Bathroom_9in1",
+      "sensors": {
+        "35_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "35_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "35_49_0_VolatileOrganicCompoundLevel": {
+          "sd": "VOCLevel ppb",
+          "unit": "ppb"
+        },
+        "35_49_0_SmokeDensity": {
+          "sd": "SmokeDensity",
+          "unit": ""
+        },
+        "35_49_0_GeneralPurpose": {
+          "sd": "PIRMotion",
+          "unit": ""
+        },
+        "35_49_0_ParticulateMatter25": {
+          "sd": "ParticulateMatter2.5 µg/m3",
+          "unit": "µg/m3"
+        },
+        "35_49_0_CarbonDioxideLevel": {
+          "sd": "CarbonDioxideLevel ppm",
+          "unit": "ppm"
+        },
+        "35_49_0_Illuminance": {
+          "sd": "Illuminance lx",
+          "unit": "lx"
+        },
+        "35_49_0_Loudness": {
+          "sd": "Loudness dBA",
+          "unit": "dBA"
+        }
+      },
+      "ld": "Bathroom_9in1"
+    },
+    "47": {
+      "sd": "FloorHeating",
+      "sensors": {
+        "47_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "47_50_1_Value_66049": {
+          "sd": "Power1 W",
+          "unit": "W"
+        },
+        "47_50_1_Value_65537": {
+          "sd": "Consumption1 kWh",
+          "unit": "kWh"
+        },
+        "47_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        },
+        "47_50_2_Value_66049": {
+          "sd": "Power2 W",
+          "unit": "W"
+        },
+        "47_50_2_Value_65537": {
+          "sd": "Consumption2 kWh",
+          "unit": "kWh"
+        }
+      },
+      "ld": "FloorHeating"
+    },
+    "48": {
+      "sd": "SceneMaster",
+      "sensors": {
+        "48_128_0_Level": {
+          "sd": "BatteryLevel",
+          "unit": "%"
+        },
+        "48_91_0_Scene_001": {
+          "sd": "Scene001",
+          "unit": ""
+        },
+        "48_91_0_Scene_002": {
+          "sd": "Scene002",
+          "unit": ""
+        },
+        "48_91_0_Scene_003": {
+          "sd": "Scene003",
+          "unit": ""
+        },
+        "48_91_0_Scene_004": {
+          "sd": "Scene004",
+          "unit": ""
+        },
+        "48_91_0_Scene_005": {
+          "sd": "Scene005",
+          "unit": ""
+        },
+        "48_91_0_Scene_006": {
+          "sd": "Scene006",
+          "unit": ""
+        },
+        "48_91_0_Scene_007": {
+          "sd": "Scene007",
+          "unit": ""
+        },
+        "48_91_0_Scene_008": {
+          "sd": "Scene008",
+          "unit": ""
+        }
+      },
+      "ld": "SceneMaster"
+    },
+    "52": {
+      "sd": "Weather1 Wall",
+      "sensors": {
+        "52_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "52_49_0_Illuminance": {
+          "sd": "Illuminance %",
+          "unit": "%"
+        },
+        "52_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "52_49_0_Velocity": {
+          "sd": "AirVelocity m/s",
+          "unit": "m/s"
+        },
+        "52_49_0_BarometricPressure": {
+          "sd": "BarometricPressure kPa",
+          "unit": "kPa"
+        },
+        "52_49_0_DewPoint": {
+          "sd": "DewPoint °C",
+          "unit": "°C"
+        },
+        "52_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "52_50_0_Value_65538": {
+          "sd": "ElectricProduction kWh",
+          "unit": "kWh"
+        },
+        "52_50_0_Value_66306": {
+          "sd": "ElectricProduction pulses",
+          "unit": "pulses"
+        }
+      },
+      "ld": "Weather1 Wall"
+    },
+    "53": {
+      "sd": "WaterHeater",
+      "sensors": {
+        "53_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "53_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        },
+        "53_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        }
+      },
+      "ld": "WaterHeater"
+    },
+    "54": {
+      "sd": "Toilet",
+      "sensors": {
+        "54_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "54_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        },
+        "54_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        }
+      },
+      "ld": "Toilet"
+    },
+    "68": {
+      "sd": "IndoorLights",
+      "sensors": {
+        "68_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "68_50_1_Value_66049": {
+          "sd": "Power1 W",
+          "unit": "W"
+        },
+        "68_50_1_Value_65537": {
+          "sd": "Consumption1 kWh",
+          "unit": "kWh"
+        },
+        "68_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        },
+        "68_50_2_Value_66049": {
+          "sd": "Power2 W",
+          "unit": "W"
+        },
+        "68_50_2_Value_65537": {
+          "sd": "Consumption2 kWh",
+          "unit": "kWh"
+        }
+      },
+      "ld": "IndoorLights"
+    },
+    "71": {
+      "sd": "OutdoorLights",
+      "sensors": {
+        "71_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "71_50_1_Value_66049": {
+          "sd": "Power1 W",
+          "unit": "W"
+        },
+        "71_50_1_Value_65537": {
+          "sd": "Consumption1 kWh",
+          "unit": "kWh"
+        },
+        "71_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        },
+        "71_50_2_Value_66049": {
+          "sd": "Power2 W",
+          "unit": "W"
+        },
+        "71_50_2_Value_65537": {
+          "sd": "Consumption2 kWh",
+          "unit": "kWh"
+        }
+      },
+      "ld": "OutdoorLights"
+    },
+    "78": {
+      "sd": "LunosKitchen",
+      "sensors": {
+        "78_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        }
+      },
+      "ld": "LunosKitchen"
+    },
+    "79": {
+      "sd": "LunosStairs",
+      "sensors": {
+        "79_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        }
+      },
+      "ld": "LunosStairs"
+    },
+    "82": {
+      "sd": "LunosBathroom",
+      "sensors": {
+        "82_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        }
+      },
+      "ld": "LunosBathroom"
+    },
+    "83": {
+      "sd": "LunosTechBox",
+      "sensors": {
+        "83_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        }
+      },
+      "ld": "LunosTechBox"
+    },
+    "85": {
+      "sd": "IndoorEUROtronic",
+      "ld": "IndoorEUROtronic",
+      "sensors": {
+        "85_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "85_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "85_49_0_DewPoint": {
+          "sd": "DewPoint °C",
+          "unit": "°C"
+        },
+        "85_49_0_CarbonDioxideLevel": {
+          "sd": "CarbonDioxideLevel ppm",
+          "unit": "ppm"
+        },
+        "85_49_0_VolatileOrganicCompoundLevel": {
+          "sd": "VOCLevel ppm",
+          "unit": "ppm"
+        }
+      }
+    },
+    "103": {
+      "sd": "RGBW1",
+      "ld": "RGBW1",
+      "sensors": {
+        "103_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "103_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "106": {
+      "sd": "RGBW2",
+      "ld": "RGBW2",
+      "sensors": {
+        "106_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "106_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "110": {
+      "sd": "RGBW3",
+      "ld": "RGBW3",
+      "sensors": {
+        "110_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "110_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "112": {
+      "sd": "RGBW4",
+      "ld": "RGBW4",
+      "sensors": {
+        "112_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "112_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "116": {
+      "sd": "RGBW5",
+      "ld": "RGBW5",
+      "sensors": {
+        "116_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "116_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "120": {
+      "sd": "RGBW6",
+      "ld": "RGBW6",
+      "sensors": {
+        "120_50_1_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "120_50_1_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "121": {
+      "sd": "3Phase",
+      "sensors": {
+        "121_50_1_Value_65537": {
+          "sd": "TotalElectricConsumption kWh",
+          "unit": "kWh"
+        },
+        "121_50_1_Value_65793": {
+          "sd": "TotalElectricConsumption kVAh",
+          "unit": "kVAh"
+        },
+        "121_50_1_Value_66049": {
+          "sd": "TotalElectricConsumption W",
+          "unit": "W"
+        },
+        "121_50_1_Value_67073": {
+          "sd": "TotalElectricConsumption pf",
+          "unit": "pf"
+        },
+        "121_50_1_Value_67329": {
+          "sd": "TotalElectricConsumption kVar",
+          "unit": "kVar"
+        },
+        "121_50_1_Value_67585": {
+          "sd": "TotalElectricConsumption kVarh",
+          "unit": "kVarh"
+        },
+        "121_50_1_Value_65538": {
+          "sd": "TotalElectricProduction kWh",
+          "unit": "kWh"
+        },
+        "121_50_1_Value_65794": {
+          "sd": "TotalElectricProduction kVAh",
+          "unit": "kVAh"
+        },
+        "121_50_1_Value_66050": {
+          "sd": "TotalElectricProduction W",
+          "unit": "W"
+        },
+        "121_50_1_Value_67074": {
+          "sd": "TotalElectricProduction pf",
+          "unit": "pf"
+        },
+        "121_50_1_Value_67330": {
+          "sd": "TotalElectricProduction kVar",
+          "unit": "kVar"
+        },
+        "121_50_1_Value_67586": {
+          "sd": "TotalElectricProduction kVarh",
+          "unit": "kVarh"
+        },
+        "121_50_2_Value_66049": {
+          "sd": "L1ElectricConsumption W",
+          "unit": "W"
+        },
+        "121_50_2_Value_66561": {
+          "sd": "L1ElectricConsumption V",
+          "unit": "V"
+        },
+        "121_50_2_Value_66817": {
+          "sd": "L1ElectricConsumption A",
+          "unit": "A"
+        },
+        "121_50_2_Value_67073": {
+          "sd": "L1ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "121_50_2_Value_66050": {
+          "sd": "L1ElectricProduction W",
+          "unit": "W"
+        },
+        "121_50_2_Value_66562": {
+          "sd": "L1ElectricProduction V",
+          "unit": "V"
+        },
+        "121_50_2_Value_66818": {
+          "sd": "L1ElectricProduction A",
+          "unit": "A"
+        },
+        "121_50_2_Value_67074": {
+          "sd": "L1ElectricProduction pf",
+          "unit": "pf"
+        },
+        "121_50_3_Value_66049": {
+          "sd": "L2ElectricConsumption W",
+          "unit": "W"
+        },
+        "121_50_3_Value_66561": {
+          "sd": "L2ElectricConsumption V",
+          "unit": "V"
+        },
+        "121_50_3_Value_66817": {
+          "sd": "L2ElectricConsumption A",
+          "unit": "A"
+        },
+        "121_50_3_Value_67073": {
+          "sd": "L2ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "121_50_3_Value_66050": {
+          "sd": "L2ElectricProduction W",
+          "unit": "W"
+        },
+        "121_50_3_Value_66562": {
+          "sd": "L2ElectricProduction V",
+          "unit": "V"
+        },
+        "121_50_3_Value_66818": {
+          "sd": "L2ElectricProduction A",
+          "unit": "A"
+        },
+        "121_50_3_Value_67074": {
+          "sd": "L2ElectricProduction pf",
+          "unit": "pf"
+        },
+        "121_50_4_Value_66049": {
+          "sd": "L3ElectricConsumption W",
+          "unit": "W"
+        },
+        "121_50_4_Value_66561": {
+          "sd": "L3ElectricConsumption V",
+          "unit": "V"
+        },
+        "121_50_4_Value_66817": {
+          "sd": "L3ElectricConsumption A",
+          "unit": "A"
+        },
+        "121_50_4_Value_67073": {
+          "sd": "L3ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "121_50_4_Value_66050": {
+          "sd": "L3ElectricProduction W",
+          "unit": "W"
+        },
+        "121_50_4_Value_66562": {
+          "sd": "L3ElectricProduction V",
+          "unit": "V"
+        },
+        "121_50_4_Value_66818": {
+          "sd": "L3ElectricProduction A",
+          "unit": "A"
+        },
+        "121_50_4_Value_67074": {
+          "sd": "L3ElectricProduction pf",
+          "unit": "pf"
+        }
+      },
+      "ld": "3Phase"
+    },
+    "122": {
+      "sd": "BathroomLights",
+      "ld": "BathroomLights",
+      "sensors": {
+        "122_37_1_CurrentValue": {
+          "sd": "Ceiling CurrentValue"
+        },
+        "122_50_1_Value_66049": {
+          "sd": "Ceiling Power W",
+          "unit": "W"
+        },
+        "122_50_1_Value_65537": {
+          "sd": "Ceiling Consumption kWh",
+          "unit": "kWh"
+        },
+        "122_37_2_CurrentValue": {
+          "sd": "Mirror CurrentValue"
+        },
+        "122_50_2_Value_66049": {
+          "sd": "Mirror Power W",
+          "unit": "W"
+        },
+        "122_50_2_Value_65537": {
+          "sd": "Mirror Consumption kWh",
+          "unit": "kWh"
+        }
+      }
+    },
+    "125": {
+      "sd": "LEDFan",
+      "ld": "LEDFan",
+      "sensors": {
+        "125_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "125_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        }
+      }
+    },
+    "139": {
+      "sd": "Diesel",
+      "sensors": {
+        "139_49_0_TankCapacity": {
+          "sd": "TankCapasity %",
+          "unit": "%"
+        }
+      },
+      "ld": "Diesel"
+    },
+    "141": {
+      "sd": "TB_IndoorLights",
+      "ld": "TB_IndoorLights",
+      "sensors": {
+        "141_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "141_50_1_Value_66049": {
+          "sd": "Power1 W",
+          "unit": "W"
+        },
+        "141_50_1_Value_65537": {
+          "sd": "Consumption1 kWh",
+          "unit": "kWh"
+        },
+        "141_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        },
+        "141_50_2_Value_66049": {
+          "sd": "Power2 W",
+          "unit": "W"
+        },
+        "141_50_2_Value_65537": {
+          "sd": "Consumption2 kWh",
+          "unit": "kWh"
+        }
+      }
+    },
+    "142": {
+      "sd": "TB_OutdoorLights",
+      "ld": "TB_OutdoorLights",
+      "sensors": {
+        "142_37_1_CurrentValue": {
+          "sd": "CurrentValue1"
+        },
+        "142_50_1_Value_66049": {
+          "sd": "Power1 W",
+          "unit": "W"
+        },
+        "142_50_1_Value_65537": {
+          "sd": "Consumption1 kWh",
+          "unit": "kWh"
+        },
+        "142_37_2_CurrentValue": {
+          "sd": "CurrentValue2"
+        },
+        "142_50_2_Value_66049": {
+          "sd": "Power2 W",
+          "unit": "W"
+        },
+        "142_50_2_Value_65537": {
+          "sd": "Consumption2 kWh",
+          "unit": "kWh"
+        }
+      }
+    },
+    "144": {
+      "sd": "TB_9in1",
+      "sensors": {
+        "144_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "144_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "144_49_0_VolatileOrganicCompoundLevel": {
+          "sd": "VOCLevel ppb",
+          "unit": "ppb"
+        },
+        "144_49_0_SmokeDensity": {
+          "sd": "SmokeDensity",
+          "unit": ""
+        },
+        "144_49_0_GeneralPurpose": {
+          "sd": "PIRMotion",
+          "unit": ""
+        },
+        "144_49_0_ParticulateMatter25": {
+          "sd": "ParticulateMatter2.5 µg/m3",
+          "unit": "µg/m3"
+        },
+        "144_49_0_CarbonDioxideLevel": {
+          "sd": "CarbonDioxideLevel ppm",
+          "unit": "ppm"
+        },
+        "144_49_0_Illuminance": {
+          "sd": "Illuminance lx",
+          "unit": "lx"
+        },
+        "144_49_0_Loudness": {
+          "sd": "Loudness dBA",
+          "unit": "dBA"
+        }
+      },
+      "ld": "TB_9in1"
+    },
+    "145": {
+      "sd": "Indoor_9in1",
+      "sensors": {
+        "145_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "145_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "145_49_0_VolatileOrganicCompoundLevel": {
+          "sd": "VOCLevel ppb",
+          "unit": "ppb"
+        },
+        "145_49_0_SmokeDensity": {
+          "sd": "SmokeDensity",
+          "unit": ""
+        },
+        "145_49_0_GeneralPurpose": {
+          "sd": "PIRMotion",
+          "unit": ""
+        },
+        "145_49_0_ParticulateMatter25": {
+          "sd": "ParticulateMatter2.5 µg/m3",
+          "unit": "µg/m3"
+        },
+        "145_49_0_CarbonDioxideLevel": {
+          "sd": "CarbonDioxideLevel ppm",
+          "unit": "ppm"
+        },
+        "145_49_0_Illuminance": {
+          "sd": "Illuminance lx",
+          "unit": "lx"
+        },
+        "145_49_0_Loudness": {
+          "sd": "Loudness dBA",
+          "unit": "dBA"
+        }
+      },
+      "ld": "Indoor_9in1"
+    },
+    "146": {
+      "sd": "GreyWaterLevel",
+      "ld": "GreyWaterLevel",
+      "sensors": {
+        "146_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "146_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "146_113_0_WaterAlarm_SensorStatus": {
+          "sd": "WaterAlarmSensorStatus"
+        }
+      }
+    },
+    "148": {
+      "sd": "OutletTBDiesel",
+      "ld": "OutletTBDiesel",
+      "sensors": {
+        "148_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "148_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "148_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "150": {
+      "sd": "OutletTBWaterpump",
+      "ld": "OutletTBWaterpump",
+      "sensors": {
+        "150_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "150_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "150_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "151": {
+      "sd": "OutletTBAirsensor",
+      "ld": "OutletTBAirSensor",
+      "sensors": {
+        "151_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "151_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "151_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "152": {
+      "sd": "OutletTBHeatCirculationAndMeter",
+      "ld": "OutletTBHeatCirculationAndMeter",
+      "sensors": {
+        "152_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "152_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "152_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "153": {
+      "sd": "OutletTBYaleSmart",
+      "ld": "OutletTBYaleSmart",
+      "sensors": {
+        "153_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "153_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "153_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "154": {
+      "sd": "OutletTBFree1",
+      "ld": "OutletTBFree1",
+      "sensors": {
+        "154_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "154_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "154_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "155": {
+      "sd": "OutletTBFree2",
+      "ld": "OutletTBFree2",
+      "sensors": {
+        "155_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "155_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "155_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "156": {
+      "sd": "OutletTBFree3",
+      "ld": "OutletTBFree3",
+      "sensors": {
+        "156_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "156_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "156_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "157": {
+      "sd": "OutletTBOutside",
+      "ld": "OutletTBOutside",
+      "sensors": {
+        "157_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "157_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "157_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "158": {
+      "sd": "OutletStairs",
+      "ld": "OutletStairs",
+      "sensors": {
+        "158_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "158_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "158_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "159": {
+      "sd": "OutletWork1",
+      "ld": "OutletWork1",
+      "sensors": {
+        "159_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "159_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "159_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "161": {
+      "sd": "OutletWork2",
+      "ld": "OutletWork2",
+      "sensors": {
+        "161_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "161_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "161_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "162": {
+      "sd": "OutletHatch1",
+      "ld": "OutletHatch1",
+      "sensors": {
+        "162_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "162_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "162_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "163": {
+      "sd": "OutletHatch2",
+      "ld": "OutletHatch2",
+      "sensors": {
+        "163_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "163_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "163_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "164": {
+      "sd": "OutletKitchen1",
+      "ld": "OutletKitchen1",
+      "sensors": {
+        "164_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "164_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "164_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "166": {
+      "sd": "OutletKitchen2",
+      "ld": "OutletKitchen2",
+      "sensors": {
+        "166_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "166_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "166_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "167": {
+      "sd": "OutletMicro1",
+      "ld": "OutletMicro1",
+      "sensors": {
+        "167_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "167_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "167_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "168": {
+      "sd": "OutletMicro2",
+      "ld": "OutletMicro2",
+      "sensors": {
+        "168_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "168_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "168_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "170": {
+      "sd": "OutletGasStove",
+      "ld": "OutletGasStove",
+      "sensors": {
+        "170_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "170_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "170_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "171": {
+      "sd": "OutletFridge",
+      "ld": "OutletFridge",
+      "sensors": {
+        "171_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "171_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "171_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "172": {
+      "sd": "OutletBed1",
+      "ld": "OutletBed1",
+      "sensors": {
+        "172_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "172_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "172_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "173": {
+      "sd": "OutletBed2",
+      "ld": "OutletBed2",
+      "sensors": {
+        "173_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "173_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "173_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "175": {
+      "sd": "OutletBed3",
+      "ld": "OutletBed3",
+      "sensors": {
+        "175_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "175_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "175_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "176": {
+      "sd": "OutletTV1",
+      "ld": "OutletTV1",
+      "sensors": {
+        "176_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "176_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "176_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "177": {
+      "sd": "OutletTV2",
+      "ld": "OutletTV2",
+      "sensors": {
+        "177_37_0_CurrentValue": {
+          "sd": "CurrentValue"
+        },
+        "177_50_0_Value_65537": {
+          "sd": "Consumption kWh",
+          "unit": "kWh"
+        },
+        "177_50_0_Value_66049": {
+          "sd": "Power W",
+          "unit": "W"
+        }
+      }
+    },
+    "181": {
+      "sd": "WindGenerator Z-Uno 2",
+      "ld": "WindGenerator Z-Uno 2",
+      "sensors": {
+        "181_49_0_Current": {
+          "sd": "Current A",
+          "unit": "A"
+        }
+      }
+    },
+    "184": {
+      "sd": "TB_SmokeDetector",
+      "ld": "TB_SmokeDetector ",
+      "sensors": {
+        "184_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "184_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "184_113_0_SmokeAlarm_SensorStatus": {
+          "sd": "SmokeAlarm_SensorStatus",
+          "unit": ""
+        }
+      }
+    },
+    "188": {
+      "sd": "Indoor MH9-CO2",
+      "ld": "Indoor MH9-CO2",
+      "sensors": {
+        "188_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "188_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "188_49_0_CarbonDioxideLevel": {
+          "sd": "CarbonDioxideLevel ppm",
+          "unit": "ppm"
+        }
+      }
+    },
+    "189": {
+      "sd": "TB_3Phase",
+      "sensors": {
+        "189_50_1_Value_65537": {
+          "sd": "TotalElectricConsumption kWh",
+          "unit": "kWh"
+        },
+        "189_50_1_Value_65793": {
+          "sd": "TotalElectricConsumption kVAh",
+          "unit": "kVAh"
+        },
+        "189_50_1_Value_66049": {
+          "sd": "TotalElectricConsumption W",
+          "unit": "W"
+        },
+        "189_50_1_Value_67073": {
+          "sd": "TotalElectricConsumption pf",
+          "unit": "pf"
+        },
+        "189_50_1_Value_67329": {
+          "sd": "TotalElectricConsumption kVar",
+          "unit": "kVar"
+        },
+        "189_50_1_Value_67585": {
+          "sd": "TotalElectricConsumption kVarh",
+          "unit": "kVarh"
+        },
+        "189_50_1_Value_65538": {
+          "sd": "TotalElectricProduction kWh",
+          "unit": "kWh"
+        },
+        "189_50_1_Value_65794": {
+          "sd": "TotalElectricProduction kVAh",
+          "unit": "kVAh"
+        },
+        "189_50_1_Value_66050": {
+          "sd": "TotalElectricProduction W",
+          "unit": "W"
+        },
+        "189_50_1_Value_67074": {
+          "sd": "TotalElectricProduction pf",
+          "unit": "pf"
+        },
+        "189_50_1_Value_67330": {
+          "sd": "TotalElectricProduction kVar",
+          "unit": "kVar"
+        },
+        "189_50_1_Value_67586": {
+          "sd": "TotalElectricProduction kVarh",
+          "unit": "kVarh"
+        },
+        "189_50_2_Value_66049": {
+          "sd": "L1ElectricConsumption W",
+          "unit": "W"
+        },
+        "189_50_2_Value_66561": {
+          "sd": "L1ElectricConsumption V",
+          "unit": "V"
+        },
+        "189_50_2_Value_66817": {
+          "sd": "L1ElectricConsumption A",
+          "unit": "A"
+        },
+        "189_50_2_Value_67073": {
+          "sd": "L1ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "189_50_2_Value_66050": {
+          "sd": "L1ElectricProduction W",
+          "unit": "W"
+        },
+        "189_50_2_Value_66562": {
+          "sd": "L1ElectricProduction V",
+          "unit": "V"
+        },
+        "189_50_2_Value_66818": {
+          "sd": "L1ElectricProduction A",
+          "unit": "A"
+        },
+        "189_50_2_Value_67074": {
+          "sd": "L1ElectricProduction pf",
+          "unit": "pf"
+        },
+        "189_50_3_Value_66049": {
+          "sd": "L2ElectricConsumption W",
+          "unit": "W"
+        },
+        "189_50_3_Value_66561": {
+          "sd": "L2ElectricConsumption V",
+          "unit": "V"
+        },
+        "189_50_3_Value_66817": {
+          "sd": "L2ElectricConsumption A",
+          "unit": "A"
+        },
+        "189_50_3_Value_67073": {
+          "sd": "L2ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "189_50_3_Value_66050": {
+          "sd": "L2ElectricProduction W",
+          "unit": "W"
+        },
+        "189_50_3_Value_66562": {
+          "sd": "L2ElectricProduction V",
+          "unit": "V"
+        },
+        "189_50_3_Value_66818": {
+          "sd": "L2ElectricProduction A",
+          "unit": "A"
+        },
+        "189_50_3_Value_67074": {
+          "sd": "L2ElectricProduction pf",
+          "unit": "pf"
+        },
+        "189_50_4_Value_66049": {
+          "sd": "L3ElectricConsumption W",
+          "unit": "W"
+        },
+        "189_50_4_Value_66561": {
+          "sd": "L3ElectricConsumption V",
+          "unit": "V"
+        },
+        "189_50_4_Value_66817": {
+          "sd": "L3ElectricConsumption A",
+          "unit": "A"
+        },
+        "189_50_4_Value_67073": {
+          "sd": "L3ElectricConsumption pf",
+          "unit": "pf"
+        },
+        "189_50_4_Value_66050": {
+          "sd": "L3ElectricProduction W",
+          "unit": "W"
+        },
+        "189_50_4_Value_66562": {
+          "sd": "L3ElectricProduction V",
+          "unit": "V"
+        },
+        "189_50_4_Value_66818": {
+          "sd": "L3ElectricProduction A",
+          "unit": "A"
+        },
+        "189_50_4_Value_67074": {
+          "sd": "L3ElectricProduction pf",
+          "unit": "pf"
+        }
+      },
+      "ld": "TB_3Phase"
+    },
+    "190": {
+      "sd": "Weather2 Mast",
+      "ld": "Weather2 Mast",
+      "sensors": {
+        "190_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "190_49_0_Illuminance": {
+          "sd": "Illuminance %",
+          "unit": "%"
+        },
+        "190_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "190_49_0_Velocity": {
+          "sd": "AirVelocity m/s",
+          "unit": "m/s"
+        },
+        "190_49_0_BarometricPressure": {
+          "sd": "BarometricPressure kPa",
+          "unit": "kPa"
+        },
+        "190_49_0_DewPoint": {
+          "sd": "DewPoint °C",
+          "unit": "°C"
+        },
+        "190_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "190_50_0_Value_65538": {
+          "sd": "ElectricProduction kWh",
+          "unit": "kWh"
+        },
+        "190_50_0_Value_66306": {
+          "sd": "ElectricProduction pulses",
+          "unit": "pulses"
+        }
+      }
+    },
+    "191": {
+      "sd": "Weather3 extra",
+      "ld": "Weather3 extra",
+      "sensors": {
+        "191_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "191_49_0_Illuminance": {
+          "sd": "Illuminance %",
+          "unit": "%"
+        },
+        "191_49_0_Humidity": {
+          "sd": "Humidity %",
+          "unit": "%"
+        },
+        "191_49_0_Velocity": {
+          "sd": "AirVelocity m/s",
+          "unit": "m/s"
+        },
+        "191_49_0_BarometricPressure": {
+          "sd": "BarometricPressure kPa",
+          "unit": "kPa"
+        },
+        "191_49_0_DewPoint": {
+          "sd": "DewPoint °C",
+          "unit": "°C"
+        },
+        "191_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "191_50_0_Value_65538": {
+          "sd": "ElectricProduction kWh",
+          "unit": "kWh"
+        },
+        "191_50_0_Value_66306": {
+          "sd": "ElectricProduction pulses",
+          "unit": "pulses"
+        }
+      }
+    },
+    "193": {
+      "sd": "FloorTemperature",
+      "ld": "FloorTemperature",
+      "sensors": {
+        "193_49_0_AirTemperature": {
+          "sd": "AirTemperature °C",
+          "unit": "°C"
+        },
+        "193_128_0_Level": {
+          "sd": "BatteryLevel %",
+          "unit": "%"
+        },
+        "193_113_0_WaterAlarm_SensorStatus": {
+          "sd": "WaterAlarmSensorStatus"
+        }
+      }
+    },
+    "202": {
+      "sd": "TB_TankTemperature",
+      "ld": "TB_TankTemperature",
+      "sensors": {
+        "202_49_2_AirTemperature": {
+          "sd": "TankTemperature °C",
+          "unit": "°C"
+        }
+      }
+    },
+    "77097332": {
+      "sd": "ColdWater",
+      "sensors": {
+        "total_m3": {
+          "sd": "Total m3",
+          "unit": "m3"
+        },
+        "target_m3": {
+          "sd": "Target m3",
+          "unit": "m3"
+        },
+        "max_flow_m3h": {
+          "sd": "MaxFlow m3h",
+          "unit": "m3h"
+        },
+        "flow_temperature_c": {
+          "sd": "FlowTemperature °C",
+          "unit": "°C"
+        },
+        "external_temperature_c": {
+          "sd": "ExternalTemperature °C",
+          "unit": "°C"
+        },
+        "rssi_dbm": {
+          "sd": "RSSI dBm",
+          "unit": "dBm"
+        }
+      },
+      "ld": "ColdWater"
+    },
+    "78101369": {
+      "sd": "HeatMeter",
+      "ld": "HeatMeter",
+      "sensors": {
+        "total_energy_consumption_kwh": {
+          "sd": "Total Energy Consumption kWh",
+          "unit": "kWh"
+        },
+        "total_volume_m3": {
+          "sd": "Total Volume m3",
+          "unit": "m3"
+        },
+        "volume_flow_m3h": {
+          "sd": "Volume Flow m3/h",
+          "unit": "m3/h"
+        },
+        "t1_temperature_c": {
+          "sd": "Hot Temperature °C",
+          "unit": "°C"
+        },
+        "t2_temperature_c": {
+          "sd": "Cold Temperature °C",
+          "unit": "°C"
+        },
+        "energy_forward_kwh": {
+          "sd": "Energy Forward kWh",
+          "unit": "kWh"
+        },
+        "energy_returned_kwh": {
+          "sd": "Energy Returned kWh",
+          "unit": "kWh"
+        },
+        "rssi_dbm": {
+          "sd": "RSSI dBm",
+          "unit": "dBm"
+        }
+      }
+    },
+    "rpi": {
+      "sd": "RPiBattery",
+      "sensors": {
+        "voltage": {
+          "sd": "Voltage V",
+          "unit": "V"
+        },
+        "capacity": {
+          "sd": "Capacity %",
+          "unit": "%"
+        },
+        "mainsPower": {
+          "sd": "MainsPower",
+          "unit": ""
+        },
+        "cpuLoad": {
+          "sd": "CPULoad %",
+          "unit": "%"
+        },
+        "cpuTemp": {
+          "sd": "CPUTemp °C",
+          "unit": "°C"
+        },
+        "diskSpace": {
+          "sd": "DiskSpace %",
+          "unit": "%"
+        },
+        "ram": {
+          "sd": "RAM %",
+          "unit": "%"
+        }
+      },
+      "ld": "RPiBattery"
+    },
+    "TB_batterypack": {
+      "sd": "TB Battery",
+      "ld": "TB Battery",
+      "sensors": {
+        "soc": {
+          "sd": "SoC %",
+          "unit": "%"
+        },
+        "soh": {
+          "sd": "SoH %",
+          "unit": "%"
+        },
+        "voltage": {
+          "sd": "Voltage V",
+          "unit": "V"
+        },
+        "temperature": {
+          "sd": "Temperature °C",
+          "unit": "°C"
+        }
+      }
+    },
+    "TB_solar": {
+      "sd": "TB Solar",
+      "ld": "TB Solar",
+      "sensors": {
+        "pvpower": {
+          "sd": "PV Power W",
+          "unit": "W"
+        },
+        "yieldtoday": {
+          "sd": "Yield Today kWh",
+          "unit": "kWh"
+        },
+        "yieldyesterday": {
+          "sd": "Yield Yesterday kWh",
+          "unit": "kWh"
+        },
+        "yieldsincereset": {
+          "sd": "Yield Since Reset kWh",
+          "unit": "kWh"
+        }
+      }
+    },
+    "TB_inverter": {
+      "sd": "TB Inverter",
+      "ld": "TB Inverter",
+      "sensors": {
+        "L1": {
+          "sd": "Power L1 W",
+          "unit": "W"
+        },
+        "L2": {
+          "sd": "Power L2 W",
+          "unit": "W"
+        },
+        "L3": {
+          "sd": "Power L3 W",
+          "unit": "W"
+        },
+        "energy": {
+          "sd": "Energy Output Since Reset kWh",
+          "unit": "kWh"
+        }
+      }
+    },
+    "wind": {
+      "sd": "WindGenerator Shunt",
+      "ld": "WindGenerator Shunt",
+      "sensors": {
+        "voltage": {
+          "sd": "Voltage V",
+          "unit": "V"
+        },
+        "current": {
+          "sd": "Current A",
+          "unit": "A"
+        },
+        "power": {
+          "sd": "Power W",
+          "unit": "W"
+        },
+        "produced_energy": {
+          "sd": "Energy Produced kWh",
+          "unit": "kWh"
+        }
+      }
+    }
+  },
+  "database": {
+    "cloudant": "tequ-data-eu",
+    "nested": true,
+    "geoView": false,
+    "monitor": {
+      "on": "true",
+      "threshold": 120
+    }
+  },
+  "ts": {
+    "sd": "Timestamp"
+  }
+}

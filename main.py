@@ -4,9 +4,55 @@ import paho.mqtt.client as mqtt
 import json
 from dotenv import load_dotenv
 import os
+import var_dump as vd
+
+# TIETORAKENTEEN HAKU METADATASTA #############################################
+sensor_list = []
+
+with open('coolbox_metadata.json', 'r', encoding='UTF-8') as config_file:
+    '''Muuetaan coolbox_metadatan sisältö dictionaryksi ja luetaan 
+    dictionary metadata-muuttujaan:'''
+    metadata = json.loads(config_file.read())
+    devices = metadata['devices']
+    '''Python-dictionarylla on keys-niminen funktio, jolla saadaan 
+    kaikki dictionaryn avaimet'''
+    device_ids = devices.keys()
+    for device_id in device_ids:
+        # # Tarkistetaan, onko avain sellainen, jota ei voi kääntää numeroksi:
+        # # Ei kuitenkaan käytetä toimintoa, koska esimerkiksi aurinkopaneelin
+        # # laite-id on merkkijono
+        # if not device_id.isnumeric():
+        #     continue
+        # Get on turvallisempi käyttää kuin devices[device_id], koska se ei kaadu, jos device_id on esim. null
+        device = devices.get(device_id)
+        # Laitteen nimi on sd-avaimen arvo:
+        device_name = device['sd']
+        sensors = device['sensors']
+        if sensors == {}:
+            continue
+        sensor_ids = sensors.keys()
+        # Esim. palovaroittimessa on kolme sensoria
+        for sensor_id in sensor_ids:
+            sensor_info = sensors.get(sensor_id)
+            # Jos sensorista puuttuu yksikkö, hypätään sen yli
+            if "unit" not in sensor_info:
+                continue
+            sensor_list.append({
+                "device_id": device_id,
+                "device_name": device_name,
+                "sensor_id": sensor_id,
+                "sensor_description": sensor_info["sd"],
+                "unit": sensor_info["unit"]
+            })
+
+# print(vd.var_dump(sensor_list))
+# print("\n", "ALKIOITA:", len(sensor_list))
+###############################################################################
 
 
-# Kerrotaan tiedosto, josta salaiset ympäristömuuttujat haetaan: 
+# MQTT-VIESTIN KÄSITTELY ######################################################
+
+# Kerrotaan tiedosto, josta salaiset ympäristömuuttujat haetaan:
 load_dotenv(dotenv_path=".env")
 
 # Haetaan jokainen ympäristömuuttuja omaan muuttujaansa:
@@ -62,22 +108,34 @@ def on_message(client, userdata, msg):
         nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
         olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi 
         tuplen ainoasta eli ensimmäisestä alkiosta.'''
-        device = tuple(payload['d'].keys())[0]
+        device_id_msg = tuple(payload['d'].keys())[0]
         # Haetaan tietosisällöstä tiedot laitteen sensoreista:
-        sensor_data = payload['d'][device]
+        sensor_data = payload['d'][device_id_msg]
         # Haetaan laitteen sensoreiden nimet/tunnisteet:
-        sensor_names = list(tuple(sensor_data.keys()))
-        print(f"Uusi viesti:")
+        sensor_ids_msg = list(tuple(sensor_data.keys()))
         '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
          sensoreiden arvot silmukassa. Lisätään samalla kunkin 
          sensorin tiedot tietokantaan.'''
-        for sensor_name in sensor_names:
-            sensor_value = sensor_data[sensor_name]['v']
-            print(f"LAITE: {device} | SENSORI: {sensor_name} | ARVO: {sensor_value} | MITTAUSHETKI: {year}/{month}/{week}/{day}/{hour}/{min}/{sec}/{ms}")
+        for sensor_id_msg in sensor_ids_msg:
+            sensor_value = sensor_data[sensor_id_msg]['v']
+            # print(f"LAITE_ID: {device_id_msg} | SENSORI_ID: {sensor_id_msg} | ARVO: {sensor_value} | MITTAUSHETKI: {year}/{month}/{week}/{day}/{hour}/{min}/{sec}/{ms}")
+            for sensor_metadata in sensor_list:
+                if sensor_metadata["sensor_id"] == sensor_id_msg and sensor_metadata["device_id"] == device_id_msg:
+                    print("sensors_dim-tauluun lisättävät tiedot saapuneesta viestistä:")
+                    print("sensor_key: tietokanta hoitaa")
+                    print(f"sensor_id: {sensor_id_msg}")
+                    print(f"sensor_name: {sensor_metadata['sensor_description']}")
+                    print(f"device_id: {device_id_msg}")
+                    print(f"device_name: {sensor_metadata['device_name']}")
+                    print(f"unit: {sensor_metadata['unit']}")
+                    print()
+                    print("measurements_fact-tauluun lisättävä tieto saapuneesta viestistä:")
+                    print(f"value: {sensor_value}")
+                    print("\n" + "-----------------------------------------------------------------" + "\n")
             ###################################################################
             ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
             osa-arvojen lisäys tietokantaan'''
-            ###################################################################             
+            ###################################################################
         # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste 
         # Juhanin tavalla, joka hakee ainoastaan laitteen ensimmäisen sensorin 
         # arvoineen'''
@@ -88,8 +146,7 @@ def on_message(client, userdata, msg):
         # #######################################################################
         # ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan 
         # osa-arvojen lisäys tietokantaan'''
-        # ####################################################################### 
-        print()       
+        # #######################################################################
     except Exception as e:
         print(e)
 
@@ -112,3 +169,4 @@ mqttc.connect(host, 8883, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 mqttc.loop_forever()
+###############################################################################

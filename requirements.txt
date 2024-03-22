@@ -3,3 +3,4 @@ certifi
 mysql-connector-python
 sqlalchemy
 python-dotenv
+var_dump
