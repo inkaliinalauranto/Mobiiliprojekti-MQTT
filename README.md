@@ -1,21 +1,26 @@
 # Team 1 CoolBox mobiiliprojekti MQTT
-Repon kopiointi:
+## Tietokanta
+- Tämä MQTT-softa toimii seuraavaa fyysistä mallia noudattavan tietokannan kanssa:
+
+![img.png](img.png)
+
+## Repon kopiointi:
 - Clone with HTTPS
 - PyCharmissa create from VCS
 
-Virtuaaliympäristön luonti:
+## Virtuaaliympäristön luonti:
 - python -m venv venv
 
-Riippuvuuksien asennus:
+## Riippuvuuksien asennus:
 - python -m pip install -r requirements.txt
 
-Virtuaaliympäristön aktivointi:
+## Virtuaaliympäristön aktivointi:
 - venv\Scripts\activate
 
-Ympäristömuuttujat:
+## Ympäristömuuttujat:
 
-- luo .env-tiedosto
-- kopioi sinne seuraavat muuttujat:
+- Luo .env-tiedosto
+- Kopioi sinne seuraavat muuttujat:
 
 TOPIC=anna/topic/jonka/rakenne/nayttaa/talta
 
@@ -25,5 +30,8 @@ PW=salasanajossamyoserikoismerkki
 
 HOST=URImuotoa.oleva.osoite
 
-- vaihda muuttujien placeholder-arvot MQTT-videossa suoraan main.py-tiedostoon merkattuihin arvoihin ilman lainausmerkkejä
-- jos epäselvyyksiä, Inka-Liina kertoo arvot
+DW=driver://kayttaja:salasana@localhost/tietokannan_nimi
+
+- Vaihda neljän ensimmäisen muuttujan placeholder-arvot MQTT-videossa suoraan main.py-tiedostoon merkattuihin arvoihin ilman lainausmerkkejä
+- Vaihda viimeisen muuttujan placeholder-arvot vastaamaan paikalliselle palvelimelle tekemäsi tietokannan tietoja
+- Jos epäselvyyksiä, Inka-Liina kertoo arvot

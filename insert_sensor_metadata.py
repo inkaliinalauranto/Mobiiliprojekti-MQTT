@@ -17,7 +17,7 @@ def insert_sensor_metadata():
     sensor_list = []
     with open('coolbox_metadata.json', 'r', encoding='UTF-8') as config_file:
         try:
-            '''Muuetaan coolbox_metadatan sisältö dictionaryksi ja luetaan 
+            '''Muutetaan coolbox_metadatan sisältö dictionaryksi ja luetaan 
             dictionary metadata-muuttujaan:'''
             metadata = json.loads(config_file.read())
             with get_dw() as _dw:
@@ -31,9 +31,9 @@ def insert_sensor_metadata():
                     device_ids = devices.keys()
                     for device_id in device_ids:
                         # ''' Tarkistetaan, onko avain sellainen, jota ei voi
-                        # kääntää numeroksi. Ei kuitenkaan käytetä toimintoa,
-                        # koska esimerkiksi aurinkopaneelin laite-id on
-                        # merkkijono. '''
+                        # kääntää numeroksi. Jos on, hypätään sen yli.
+                        # [Ei kuitenkaan käytetä toimintoa, koska esimerkiksi
+                        # aurinkopaneelin laite-id on merkkijono.] '''
                         # if not device_id.isnumeric():
                         #     continue
                         ''' Get-metodia on turvallisempi käyttää kuin arvon 
@@ -48,7 +48,8 @@ def insert_sensor_metadata():
                         sensor_ids = sensors.keys()
                         for sensor_id in sensor_ids:
                             sensor_info = sensors.get(sensor_id)
-                            # Jos sensorista puuttuu yksikkö, hypätään sen yli.
+                            ''' Jos sensorista puuttuu yksikköavain, 
+                            hypätään sen yli.'''
                             if "unit" not in sensor_info:
                                 continue
                             sensor_list.append({
@@ -58,7 +59,9 @@ def insert_sensor_metadata():
                                 "sensor_description": sensor_info["sd"],
                                 "unit": sensor_info["unit"]
                             })
-                            _sensors_dim_query = text('INSERT INTO sensors_dim (sensor_id, sensor_name, device_id, device_name, unit) VALUES (:sensor_id, :sensor_name, :device_id, :device_name, :unit)')
+                            _sensors_dim_query = text('INSERT INTO sensors_dim (sensor_id, sensor_name, device_id, '
+                                                      'device_name, unit) VALUES (:sensor_id, :sensor_name, '
+                                                      ':device_id, :device_name, :unit)')
                             _dw.execute(_sensors_dim_query, {'sensor_id': sensor_id,
                                                              'sensor_name': sensor_info['sd'],
                                                              'device_id': device_id,

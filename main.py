@@ -63,7 +63,6 @@ def _get_dates_key(msg_dt, dates):
 
 def _get_sensors_key(msg_sensor_id, msg_device_id, sensors_from_dw):
     for s in sensors_from_dw:
-        print(s)
         if msg_sensor_id == s["sensor_id"] and msg_device_id == s["device_id"]:
             return s["sensor_key"]
     return None
@@ -85,10 +84,12 @@ def on_message(client, userdata, msg):
                 ts_in_sec = payload['ts'] / 1000
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
                 dt = datetime.fromtimestamp(ts_in_sec)
-                _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES (:year, :month, :week, :day, :hour, :min, :sec, :ms)')
+                _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
+                                        ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
                 # Irroitetaan päivämäärän eri osat pistenotaation avulla:
                 _dw.execute(_dates_dim_query,
-                            {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day, 'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
+                            {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day,
+                             'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
                 '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
                 viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
                 nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
@@ -114,10 +115,10 @@ def on_message(client, userdata, msg):
                     if _date_key is None or _sensor_key is None:
                         continue
 
-                    _measurement_fact_query = text("INSERT INTO measurements_fact (sensor, date, value) "
-                                                   "VALUES (:sensor, :date, :value)")
+                    _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
+                                                   "VALUES (:sensor_key, :date_key, :value)")
                     _dw.execute(_measurement_fact_query,
-                                {"sensor": _sensor_key, "date": _date_key, "value": sensor_value})
+                                {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
                 _dw.commit()
 
                 # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste
