@@ -5,7 +5,6 @@ import json
 from dotenv import load_dotenv
 import os
 from sqlalchemy import text
-import var_dump as vd
 from dw import get_dw
 from insert_sensor_metadata import insert_sensor_metadata
 
@@ -48,7 +47,7 @@ def _get_dates_dims(_dw):
 
 
 def _get_sensors_dims(_dw):
-    _query = text("SELECT sensor_id, device_id FROM sensors_dim;")
+    _query = text("SELECT * FROM sensors_dim;")
     rows = _dw.execute(_query).mappings().all()
     return rows
 
@@ -64,6 +63,7 @@ def _get_dates_key(msg_dt, dates):
 
 def _get_sensors_key(msg_sensor_id, msg_device_id, sensors_from_dw):
     for s in sensors_from_dw:
+        print(s)
         if msg_sensor_id == s["sensor_id"] and msg_device_id == s["device_id"]:
             return s["sensor_key"]
     return None
@@ -85,12 +85,10 @@ def on_message(client, userdata, msg):
                 ts_in_sec = payload['ts'] / 1000
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
                 dt = datetime.fromtimestamp(ts_in_sec)
-                _dates_dim_query = text("INSERT INTO dates_dim VALUES (year, month, week, day, hour, min, sec, "
-                                        "ms) VALUES (:year, :month, :week, :day, :hour, :min, :sec, :ms)")
+                _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES (:year, :month, :week, :day, :hour, :min, :sec, :ms)')
                 # Irroitetaan päivämäärän eri osat pistenotaation avulla:
                 _dw.execute(_dates_dim_query,
-                            {"year": dt.year, "month": dt.month, "week": dt.isocalendar().week, "day": dt.day,
-                             "hour": dt.hour, "min": dt.minute, "sec": dt.second, "ms": dt.microsecond})
+                            {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day, 'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
                 '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
                 viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
                 nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 

@@ -1,9 +1,16 @@
 import json
 from sqlalchemy import text
 from dw import get_dw
+import var_dump as vd
 
 
 # SENSOREIDEN KUVAUKSIEN HAKU METADATASTA #####################################
+def clear_sensors_dim(_dw):
+    _clear_sensors_dim_query = text("DELETE FROM sensors_dim;")
+    _dw.execute(_clear_sensors_dim_query)
+    _dw.commit()
+
+
 def insert_sensor_metadata():
     '''Alustetaan lista, johon myöhemmin tallennetaan yksittäisen sensorin
     datarakenne yksittäiseksi dictionary-alkioksi.'''
@@ -15,6 +22,9 @@ def insert_sensor_metadata():
             metadata = json.loads(config_file.read())
             with get_dw() as _dw:
                 try:
+                    '''Poistetaan taulussa jo olevat tietueet edeltävästi, 
+                    jottei niitä tule tauluun kaksin kappalein.'''
+                    clear_sensors_dim(_dw)
                     devices = metadata['devices']
                     '''Python-dictionarylla on keys-niminen funktio, jolla saadaan 
                     haettua dictionaryn jokainen avain.'''
@@ -48,14 +58,12 @@ def insert_sensor_metadata():
                                 "sensor_description": sensor_info["sd"],
                                 "unit": sensor_info["unit"]
                             })
-                            _sensors_dim_query = text("INSERT INTO sensors_dim VALUES (sensor_id, sensor_name, "
-                                                      "device_id, device_name, unit) VALUES (:sensor_id, "
-                                                      ":sensor_name, :device_id, :device_name, :unit)")
-                            _dw.execute(_sensors_dim_query, {"sensor_id": sensor_id,
-                                                             "sensor_name": sensor_info["sd"],
-                                                             "device_id": device_id,
-                                                             "device_name": device_name,
-                                                             "unit": sensor_info["unit"]})
+                            _sensors_dim_query = text('INSERT INTO sensors_dim (sensor_id, sensor_name, device_id, device_name, unit) VALUES (:sensor_id, :sensor_name, :device_id, :device_name, :unit)')
+                            _dw.execute(_sensors_dim_query, {'sensor_id': sensor_id,
+                                                             'sensor_name': sensor_info['sd'],
+                                                             'device_id': device_id,
+                                                             'device_name': device_name,
+                                                             'unit': sensor_info['unit']})
                     _dw.commit()
                 except Exception as e:
                     print(e)
@@ -65,3 +73,4 @@ def insert_sensor_metadata():
             print(e)
     # print(vd.var_dump(sensor_list))
     # print("\n", "ALKIOITA:", len(sensor_list))
+

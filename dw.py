@@ -2,13 +2,13 @@ import contextlib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('mysql+mysqlconnector://root:@localhost/tietokannan_nimi')
+engine = create_engine('mysql+mysqlconnector://root:@localhost/cooldev_test_dump')
 dw_session = sessionmaker(bind=engine)
 
 
-def get_connection():
-    conn = dw_session()
-    return conn
+# def get_connection():
+#     conn = dw_session()
+#     return conn
 
 
 @contextlib.contextmanager
