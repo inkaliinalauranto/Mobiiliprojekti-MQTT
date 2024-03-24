@@ -5,9 +5,13 @@ import var_dump as vd
 
 
 # SENSOREIDEN KUVAUKSIEN HAKU METADATASTA #####################################
-def clear_sensors_dim(_dw):
+def clear_tables(_dw):
+    _clear_measurements_fact_query = text("DELETE FROM measurements_fact;")
+    _dw.execute(_clear_measurements_fact_query)
     _clear_sensors_dim_query = text("DELETE FROM sensors_dim;")
     _dw.execute(_clear_sensors_dim_query)
+    _clear_dates_dim_query = text("DELETE FROM dates_dim;")
+    _dw.execute(_clear_dates_dim_query)
     _dw.commit()
 
 
@@ -22,9 +26,15 @@ def insert_sensor_metadata():
             metadata = json.loads(config_file.read())
             with get_dw() as _dw:
                 try:
-                    '''Poistetaan taulussa jo olevat tietueet edeltävästi, 
-                    jottei niitä tule tauluun kaksin kappalein.'''
-                    clear_sensors_dim(_dw)
+                    '''Poistetaan sensors_dim-taulussa jo olevat tietueet 
+                    edeltävästi, jottei niitä tule tauluun kaksin kappalein. 
+                    Viite-eheyden vuoksi on tätä ennen poistettava myös 
+                    tietueet measurements_fact-taulusta, koska jokaiseen 
+                    measurements_fact-taulun tietueeseen on viite jostakin 
+                    sensors_dim-taulun tietueesta. Poistetaan myös tietueet 
+                    dates_dimistä, koska taulussa olevia päivämääriä ei enää 
+                    tarvita, kun niihin liittyvät sensoriarvot on poistettu.'''
+                    clear_tables(_dw)
                     devices = metadata['devices']
                     '''Python-dictionarylla on keys-niminen funktio, jolla saadaan 
                     haettua dictionaryn jokainen avain.'''

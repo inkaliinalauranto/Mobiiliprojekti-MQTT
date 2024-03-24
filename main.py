@@ -40,19 +40,19 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe(topic)
 
 
-def _get_dates_dims(_dw):
+def _get_dates_dim(_dw):
     _query = text("SELECT * FROM dates_dim;")
     rows = _dw.execute(_query).mappings().all()
     return rows
 
 
-def _get_sensors_dims(_dw):
-    _query = text("SELECT * FROM sensors_dim;")
+def _get_sensors_dim(_dw):
+    _query = text("SELECT sensor_id, device_id, sensor_key FROM sensors_dim;")
     rows = _dw.execute(_query).mappings().all()
     return rows
 
 
-def _get_dates_key(msg_dt, dates):
+def _get_date_key(msg_dt, dates):
     for d_dim in dates:
         if msg_dt.year == d_dim["year"] and msg_dt.month == d_dim["month"] and msg_dt.isocalendar().week == d_dim[
             "week"] and msg_dt.day == d_dim["day"] and msg_dt.hour == d_dim["hour"] and msg_dt.minute == d_dim[
@@ -61,10 +61,10 @@ def _get_dates_key(msg_dt, dates):
     return None
 
 
-def _get_sensors_key(msg_sensor_id, msg_device_id, sensors_from_dw):
-    for s in sensors_from_dw:
-        if msg_sensor_id == s["sensor_id"] and msg_device_id == s["device_id"]:
-            return s["sensor_key"]
+def _get_sensor_key(msg_sensor_id, msg_device_id, sensors_from_dw):
+    for sensor in sensors_from_dw:
+        if msg_sensor_id == sensor["sensor_id"] and msg_device_id == sensor["device_id"]:
+            return sensor["sensor_key"]
     return None
 
 
@@ -107,10 +107,10 @@ def on_message(client, userdata, msg):
                     sensor_value = sensor_data[sensor_id_msg]['v']
                     # print(f"LAITE_ID: {device_id_msg} | SENSORI_ID: {sensor_id_msg} | ARVO: {sensor_value} | "
                     #       f"MITTAUSHETKI: dt")
-                    dates_dim = _get_dates_dims(_dw)
-                    sensors_dim = _get_sensors_dims(_dw)
-                    _date_key = _get_dates_key(dt, dates_dim)
-                    _sensor_key = _get_sensors_key(sensor_id_msg, device_id_msg, sensors_dim)
+                    dates_dim = _get_dates_dim(_dw)
+                    sensors_dim = _get_sensors_dim(_dw)
+                    _date_key = _get_date_key(dt, dates_dim)
+                    _sensor_key = _get_sensor_key(sensor_id_msg, device_id_msg, sensors_dim)
 
                     if _date_key is None or _sensor_key is None:
                         continue
