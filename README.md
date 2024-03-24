@@ -4,6 +4,13 @@
 
 ![img.png](img.png)
 
+- Voit kopioida testitietokantarakenteen esimerkiksi seuraavasti:
+1) Käynnistä XAMPP ja navigoi phpMyAdminiin 
+2) Navigoi Databases-välilehdelle ja luo uusi tietokanta nimeltä cooldev_test_dump
+3) Siirry cooldev_test_dump-tietokantaan ja siirry SQL-välilehdelle
+5) Kopioi SQL-välilehden query-kenttään tämän projektin sql-kansion cooldev_test_dump.sql-tiedoston sisältö
+6) Paina Go, minkä jälkeen tehdyssä tietokannassa pitäisi näkyä fyysisen mallin mukaiset taulut ja sarakkeet
+
 ## Repon kopiointi:
 - Clone with HTTPS
 - PyCharmissa create from VCS
