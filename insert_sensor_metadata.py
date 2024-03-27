@@ -3,13 +3,11 @@ from sqlalchemy import text
 from dw import get_dw
 
 
-# SENSOREIDEN KUVAUKSIEN HAKU METADATASTA #####################################
-
 def insert_sensor_metadata():
     with open('coolbox_metadata.json', 'r', encoding='UTF-8') as config_file:
         try:
-            '''Muutetaan coolbox_metadatan sisältö dictionaryksi ja luetaan 
-            dictionary metadata-muuttujaan:'''
+            # Muutetaan coolbox_metadatan sisältö dictionaryksi ja luetaan
+            # dictionary metadata-muuttujaan:
             metadata = json.loads(config_file.read())
 
             with get_dw() as _dw:
@@ -18,27 +16,27 @@ def insert_sensor_metadata():
                     result = _dw.execute(_check_query).fetchone()
                     row_count = result[0]
 
-                    '''Jos sensors_dim taulussa ei ole tietueita eli 
-                    row_count on 0, lisätään sensorit metatietoineen 
-                    tauluun. Muussa tapauksessa sensoreiden lisäystä ei 
-                    tehdä.'''
+                    # Jos sensors_dim taulussa ei ole tietueita eli
+                    # row_count on 0, lisätään sensorit metatietoineen
+                    # tauluun. Muussa tapauksessa sensoreiden lisäystä ei
+                    # tehdä.
                     if row_count <= 0:
                         devices = metadata['devices']
-                        '''Python-dictionarylla on keys-niminen funktio, jolla saadaan 
-                        haettua dictionaryn jokainen avain.'''
+                        # Python-dictionarylla on keys-niminen funktio, jolla saadaan
+                        # haettua dictionaryn jokainen avain.
                         device_ids = devices.keys()
 
                         for device_id in device_ids:
-                            # ''' Tarkistetaan, onko avain sellainen, jota ei voi
-                            # kääntää numeroksi. Jos on, hypätään sen yli.
-                            # [Ei kuitenkaan käytetä toimintoa, koska esimerkiksi
-                            # aurinkopaneelin laite-id on merkkijono.] '''
+                            # # Tarkistetaan, onko avain sellainen, jota ei voi
+                            # # kääntää numeroksi. Jos on, hypätään sen yli.
+                            # # [Ei kuitenkaan käytetä toimintoa, koska esimerkiksi
+                            # # aurinkopaneelin laite-id on merkkijono.]
                             # if not device_id.isnumeric():
                             #     continue
-                            ''' Get-metodia on turvallisempi käyttää kuin arvon 
-                            hakemista avaimella (devices[device_id]), koska 
-                            get-metodilla ohjelma ei kaadu, jos device_id olisi 
-                            esim. null'''
+                            # Get-metodia on turvallisempi käyttää kuin arvon
+                            # hakemista avaimella (devices[device_id]), koska
+                            # get-metodilla ohjelma ei kaadu, jos device_id olisi
+                            # esim. null.
                             device = devices.get(device_id)
                             device_name = device['sd']
                             sensors = device['sensors']
@@ -62,7 +60,6 @@ def insert_sensor_metadata():
                                                                  'device_id': device_id,
                                                                  'device_name': device_name,
                                                                  'unit': sensor_info['unit']})
-
                         _dw.commit()
                 except Exception as e:
                     print(e)

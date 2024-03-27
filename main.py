@@ -7,9 +7,10 @@ import os
 from sqlalchemy import text
 from dw import get_dw
 from insert_sensor_metadata import insert_sensor_metadata
+from lists import *
 
-''' Ennen MQTT Brokerista vastaanotettavien viestien käsittelemistä ja 
-lisäämistä lisätään tietueet sensors_dim-tauluun.'''
+# Ennen MQTT Brokerista vastaanotettavien viestien käsittelemistä ja
+# lisäämistä lisätään tietueet sensors_dim-tauluun.
 insert_sensor_metadata()
 
 # MQTT-VIESTIN KÄSITTELY ######################################################
@@ -23,8 +24,8 @@ username = os.environ.get("UN")
 password = os.environ.get("PW")
 host = os.environ.get("HOST")
 
-'''Jos autorisointiongelmia ilmenee, tarkistetaan että ympäristömuuttujista 
-on haettu oikeat arvot:'''
+# Jos autorisointiongelmia ilmenee, tarkistetaan että ympäristömuuttujista
+# on haettu oikeat arvot:
 print(topic)
 print(username)
 print(password)
@@ -76,12 +77,12 @@ def on_message(client, userdata, msg):
                 # Muutetaan yksittäisen viestin tietosisältö dictionary-muotoon
                 payload = json.loads(msg.payload)
 
-                '''Muutetaan aikaleima/epoch luettavaan päivämäärämuotoon. Koska 
-                 muunnoksessa käytetään datetimen fromtimestamp-funktiota, on 
-                 aikaleima muutettava ensin millisekunneista sekunneiksi. Koska 
-                 tietokannassa on sarake myös mikrosekunneille, ei pyöristetä 
-                 yksikkömuunnoksen osamäärää (ei käytetä Python integer 
-                 divisionia).  '''
+                # Muutetaan aikaleima/epoch luettavaan päivämäärämuotoon. Koska
+                # muunnoksessa käytetään datetimen fromtimestamp-funktiota, on
+                # aikaleima muutettava ensin millisekunneista sekunneiksi. Koska
+                # tietokannassa on sarake myös mikrosekunneille, ei pyöristetä
+                # yksikkömuunnoksen osamäärää (ei käytetä Python integer
+                # divisionia).
                 ts_in_sec = payload['ts'] / 1000
 
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
@@ -95,11 +96,11 @@ def on_message(client, userdata, msg):
                             {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day,
                              'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
 
-                '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
-                viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
-                nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
-                olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi 
-                tuplen ainoasta eli ensimmäisestä alkiosta.'''
+                # Haetaan tietosisällöstä laitteen nimi/id hakemalla
+                # viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen
+                # nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä
+                # olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi
+                # tuplen ainoasta eli ensimmäisestä alkiosta.
                 device_id_msg = tuple(payload['d'].keys())[0]
 
                 # Haetaan tietosisällöstä tiedot laitteen sensoreista:
@@ -108,10 +109,11 @@ def on_message(client, userdata, msg):
                 # Haetaan laitteen sensoreiden nimet/tunnisteet:
                 sensor_ids_msg = list(tuple(sensor_data.keys()))
 
-                '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
-                 sensoreiden arvot silmukassa. Lisätään samalla kunkin 
-                 sensorin tiedot tietokantaan.'''
+                # Koska laitteissa voi olla useampia sensoreita, haetaan laitteen
+                # sensoreiden arvot silmukassa. Lisätään samalla kunkin
+                # sensorin tiedot tietokantaan.
                 for sensor_id_msg in sensor_ids_msg:
+                    # print(sensor_id_msg)
                     sensor_value = sensor_data[sensor_id_msg]['v']
                     dates_dim = _get_dates_dim(_dw)
                     sensors_dim = _get_sensors_dim(_dw)
@@ -121,12 +123,63 @@ def on_message(client, userdata, msg):
                     if _date_key is None or _sensor_key is None:
                         continue
 
-                    _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
-                                                   "VALUES (:sensor_key, :date_key, :value)")
+                    # Jos sensorin id löytyy yhdestäkään listasta, jossa on
+                    # lueteltuna kulutusta indikoivien sensorien id:t,
+                    # lisätään value kaikkien kulutusta mittaavien sensoreiden
+                    # arvot kokoavaan tauluun:
+                    if sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_id:
+                        print(f"Lisätään value total_consumptions_fact-tauluun {sensor_id_msg}")
+                        _total_consumptions_fact_query = text("INSERT INTO total_consumptions_fact (sensor_key, "
+                                                              "date_key, value) VALUES (:sensor_key, :date_key, "
+                                                              ":value)")
+                        _dw.execute(_total_consumptions_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
 
-                    _dw.execute(_measurement_fact_query,
-                                {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
-
+                    # Jos sensorin id löytyy lights_id-listasta, lisätään
+                    # value lighting_consumptions_fact-tauluun:
+                    if sensor_id_msg in lights_ids:
+                        print(f"Lisätään value lighting_consumptions_fact-tauluun {sensor_id_msg}")
+                        _lighting_consumptions_fact_query = text("INSERT INTO lighting_consumptions_fact (sensor_key, "
+                                                                 "date_key, value) VALUES (:sensor_key, :date_key, "
+                                                                 ":value)")
+                        _dw.execute(_lighting_consumptions_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                    # Jos sensorin id löytyy outlet_ids-listasta, lisätään
+                    # value outlets_consumptions_fact-tauluun:
+                    elif sensor_id_msg in outlet_ids:
+                        print(f"Lisätään value outlets_consumptions_fact-tauluun {sensor_id_msg}")
+                        _outlets_consumptions_fact_query = text("INSERT INTO outlets_consumptions_fact (sensor_key, "
+                                                                "date_key, value) VALUES (:sensor_key, :date_key, "
+                                                                ":value)")
+                        _dw.execute(_outlets_consumptions_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                    # Jos sensorin id löytyy heater_id-listasta, lisätään
+                    # value heating_consumptions_fact-tauluun:
+                    elif sensor_id_msg in heater_id:
+                        print(f"Lisätään value heating_consumptions_fact-tauluun {sensor_id_msg}")
+                        _heating_consumptions_fact_query = text("INSERT INTO heating_consumptions_fact (sensor_key, "
+                                                                "date_key, value) VALUES (:sensor_key, :date_key, "
+                                                                ":value)")
+                        _dw.execute(_heating_consumptions_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                    # Jos sensorin id löytyy yhdestäkään listasta, jossa on
+                    # lueteltuna tuottoa indikoivien sensorien id:t,
+                    # lisätään value kaikkien tuottoa mittaavien sensoreiden
+                    # arvot kokoavaan tauluun:
+                    elif sensor_id_msg in solar_prod_ids or sensor_id_msg in inverter_prod_id or sensor_id_msg in wind_prod_id or sensor_id_msg in phase3_prod_ids:
+                        print(f"Lisätään value productions_fact-tauluun {sensor_id_msg}")
+                        _productions_fact_query = text("INSERT INTO productions_fact (sensor_key, date_key, value) "
+                                                       "VALUES (:sensor_key, :date_key, :value)")
+                        _dw.execute(_productions_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                    # Muussa tapauksessa lisätään value
+                    # measurements_fact-tauluun:
+                    else:
+                        print(f"Lisätään value measurements_fact-tauluun {sensor_id_msg}")
+                        _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
+                                                       "VALUES (:sensor_key, :date_key, :value)")
+                        _dw.execute(_measurement_fact_query,
+                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
                 _dw.commit()
 
             except Exception as e1:
@@ -144,9 +197,9 @@ mqttc.on_message = on_message
 # Käyttäjänimi ja salasana:
 mqttc.username_pw_set(username, password)
 
-'''Koska käytetään suojattua yhteyttä (portti 8883), on kutsuttava 
-tls_set-funktiota, jonka parametriksi on asetettava certifi-kirjaston 
-where-funktiokutsu.'''
+# Koska käytetään suojattua yhteyttä (portti 8883), on kutsuttava
+# tls_set-funktiota, jonka parametriksi on asetettava certifi-kirjaston
+# where-funktiokutsu.
 mqttc.tls_set(certifi.where())
 # Määritellään viesteille host, portti ja ping-aika:
 mqttc.connect(host, 8883, 60)

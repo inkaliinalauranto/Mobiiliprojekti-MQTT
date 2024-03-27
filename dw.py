@@ -14,11 +14,6 @@ engine = create_engine(dw_uri)
 dw_session = sessionmaker(bind=engine)
 
 
-# def get_connection():
-#     conn = dw_session()
-#     return conn
-
-
 @contextlib.contextmanager
 def get_dw():
     conn = None
