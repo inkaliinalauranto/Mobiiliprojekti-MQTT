@@ -129,7 +129,7 @@ def on_message(client, userdata, msg):
                 # valueJ = sensor_data[sensorJ]['v']
                 # print(f"Sensori: {sensorJ} | arvo: {valueJ} | mittaushetki: {dt}")
                 # #######################################################################
-                # ''' Tähän sensor- ja -value-muuttujien arvojen sekä dt-muuttujan
+                # ''' Tähän value-muuttujan arvon ja dt-muuttujan
                 # osa-arvojen lisäys tietokantaan'''
                 # #######################################################################
             except Exception as e1:
