@@ -128,7 +128,6 @@ def on_message(client, userdata, msg):
                     # lisätään value kaikkien kulutusta mittaavien sensoreiden
                     # arvot kokoavaan tauluun:
                     if sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_id:
-                        print(f"Lisätään value total_consumptions_fact-tauluun {sensor_id_msg}")
                         _total_consumptions_fact_query = text("INSERT INTO total_consumptions_fact (sensor_key, "
                                                               "date_key, value) VALUES (:sensor_key, :date_key, "
                                                               ":value)")
@@ -138,7 +137,6 @@ def on_message(client, userdata, msg):
                     # Jos sensorin id löytyy lights_id-listasta, lisätään
                     # value lighting_consumptions_fact-tauluun:
                     if sensor_id_msg in lights_ids:
-                        print(f"Lisätään value lighting_consumptions_fact-tauluun {sensor_id_msg}")
                         _lighting_consumptions_fact_query = text("INSERT INTO lighting_consumptions_fact (sensor_key, "
                                                                  "date_key, value) VALUES (:sensor_key, :date_key, "
                                                                  ":value)")
@@ -147,7 +145,6 @@ def on_message(client, userdata, msg):
                     # Jos sensorin id löytyy outlet_ids-listasta, lisätään
                     # value outlets_consumptions_fact-tauluun:
                     elif sensor_id_msg in outlet_ids:
-                        print(f"Lisätään value outlets_consumptions_fact-tauluun {sensor_id_msg}")
                         _outlets_consumptions_fact_query = text("INSERT INTO outlets_consumptions_fact (sensor_key, "
                                                                 "date_key, value) VALUES (:sensor_key, :date_key, "
                                                                 ":value)")
@@ -156,7 +153,6 @@ def on_message(client, userdata, msg):
                     # Jos sensorin id löytyy heater_id-listasta, lisätään
                     # value heating_consumptions_fact-tauluun:
                     elif sensor_id_msg in heater_id:
-                        print(f"Lisätään value heating_consumptions_fact-tauluun {sensor_id_msg}")
                         _heating_consumptions_fact_query = text("INSERT INTO heating_consumptions_fact (sensor_key, "
                                                                 "date_key, value) VALUES (:sensor_key, :date_key, "
                                                                 ":value)")
@@ -167,7 +163,6 @@ def on_message(client, userdata, msg):
                     # lisätään value kaikkien tuottoa mittaavien sensoreiden
                     # arvot kokoavaan tauluun:
                     elif sensor_id_msg in solar_prod_ids or sensor_id_msg in inverter_prod_id or sensor_id_msg in wind_prod_id or sensor_id_msg in phase3_prod_ids:
-                        print(f"Lisätään value productions_fact-tauluun {sensor_id_msg}")
                         _productions_fact_query = text("INSERT INTO productions_fact (sensor_key, date_key, value) "
                                                        "VALUES (:sensor_key, :date_key, :value)")
                         _dw.execute(_productions_fact_query,
@@ -175,7 +170,6 @@ def on_message(client, userdata, msg):
                     # Muussa tapauksessa lisätään value
                     # measurements_fact-tauluun:
                     else:
-                        print(f"Lisätään value measurements_fact-tauluun {sensor_id_msg}")
                         _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
                                                        "VALUES (:sensor_key, :date_key, :value)")
                         _dw.execute(_measurement_fact_query,
