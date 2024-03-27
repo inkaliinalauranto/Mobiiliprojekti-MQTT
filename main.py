@@ -75,6 +75,7 @@ def on_message(client, userdata, msg):
             try:
                 # Muutetaan yksittäisen viestin tietosisältö dictionary-muotoon
                 payload = json.loads(msg.payload)
+
                 '''Muutetaan aikaleima/epoch luettavaan päivämäärämuotoon. Koska 
                  muunnoksessa käytetään datetimen fromtimestamp-funktiota, on 
                  aikaleima muutettava ensin millisekunneista sekunneiksi. Koska 
@@ -82,31 +83,36 @@ def on_message(client, userdata, msg):
                  yksikkömuunnoksen osamäärää (ei käytetä Python integer 
                  divisionia).  '''
                 ts_in_sec = payload['ts'] / 1000
+
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
                 dt = datetime.fromtimestamp(ts_in_sec)
+
                 _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
                                         ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
+
                 # Irroitetaan päivämäärän eri osat pistenotaation avulla:
                 _dw.execute(_dates_dim_query,
                             {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day,
                              'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
+
                 '''Haetaan tietosisällöstä laitteen nimi/id hakemalla 
                 viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen 
                 nimi. Koska keys-funktio palauttaa haetun arvon objektin sisällä 
                 olevaan listaan, muutetaan tulos tupleksi ja haetaan avaimen nimi 
                 tuplen ainoasta eli ensimmäisestä alkiosta.'''
                 device_id_msg = tuple(payload['d'].keys())[0]
+
                 # Haetaan tietosisällöstä tiedot laitteen sensoreista:
                 sensor_data = payload['d'][device_id_msg]
+
                 # Haetaan laitteen sensoreiden nimet/tunnisteet:
                 sensor_ids_msg = list(tuple(sensor_data.keys()))
+
                 '''Koska laitteissa voi olla useampia sensoreita, haetaan laitteen 
                  sensoreiden arvot silmukassa. Lisätään samalla kunkin 
                  sensorin tiedot tietokantaan.'''
                 for sensor_id_msg in sensor_ids_msg:
                     sensor_value = sensor_data[sensor_id_msg]['v']
-                    # print(f"LAITE_ID: {device_id_msg} | SENSORI_ID: {sensor_id_msg} | ARVO: {sensor_value} | "
-                    #       f"MITTAUSHETKI: dt")
                     dates_dim = _get_dates_dim(_dw)
                     sensors_dim = _get_sensors_dim(_dw)
                     _date_key = _get_date_key(dt, dates_dim)
@@ -117,21 +123,12 @@ def on_message(client, userdata, msg):
 
                     _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
                                                    "VALUES (:sensor_key, :date_key, :value)")
+
                     _dw.execute(_measurement_fact_query,
                                 {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+
                 _dw.commit()
 
-                # ''' Haetaan sensor-muuttujaan laitteessa olevan sensorin nimi/tunniste
-                # Juhanin tavalla, joka hakee ainoastaan laitteen ensimmäisen sensorin
-                # arvoineen'''
-                # sensorJ = tuple(sensor_data.keys())[0]
-                # # Haetaan laitteessa olevan sensorin arvo:
-                # valueJ = sensor_data[sensorJ]['v']
-                # print(f"Sensori: {sensorJ} | arvo: {valueJ} | mittaushetki: {dt}")
-                # #######################################################################
-                # ''' Tähän value-muuttujan arvon ja dt-muuttujan
-                # osa-arvojen lisäys tietokantaan'''
-                # #######################################################################
             except Exception as e1:
                 print(e1)
                 _dw.rollback()
@@ -146,6 +143,7 @@ mqttc.on_message = on_message
 
 # Käyttäjänimi ja salasana:
 mqttc.username_pw_set(username, password)
+
 '''Koska käytetään suojattua yhteyttä (portti 8883), on kutsuttava 
 tls_set-funktiota, jonka parametriksi on asetettava certifi-kirjaston 
 where-funktiokutsu.'''
