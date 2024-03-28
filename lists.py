@@ -47,14 +47,19 @@ outlet_ids = [
     "177_50_0_Value_65537"
 ]
 
+total_consumption = [
+    "189_50_1_Value_65537"
+]
+
 # lisääntyvä arvo
 heater_id = [
-    "47_50_1_Value_65537"
+    "47_50_1_Value_65537",
+
 ]
 
 # en saanut arvoja
 solar_prod_ids = [
-    "yield-today",
+    "yieldtoday",
     "yieldyesterday",
     "yieldsincereset"
 ]
