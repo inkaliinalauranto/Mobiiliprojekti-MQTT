@@ -69,6 +69,61 @@ def _get_sensor_key(msg_sensor_id, msg_device_id, sensors_from_dw):
     return None
 
 
+# Alustetaan dictionary, jota sensoreiden kumulatiivisten arvojen käsittelyssä:
+consumptions_and_productions = {
+    "68_50_1_Value_65537": None,
+    "68_50_2_Value_65537": None,
+    "71_50_1_Value_65537": None,
+    "71_50_2_Value_65537": None,
+    "103_50_1_Value_65537": None,
+    "106_50_1_Value_65537": None,
+    "110_50_1_Value_65537": None,
+    "112_50_1_Value_65537": None,
+    "116_50_1_Value_65537": None,
+    "120_50_1_Value_65537": None,
+    "122_50_1_Value_65537": None,
+    "122_50_2_Value_65537": None,
+    "141_50_1_Value_65537": None,
+    "141_50_2_Value_65537": None,
+    "142_50_1_Value_65537": None,
+    "142_50_2_Value_65537": None,
+    "148_50_0_Value_65537": None,
+    "150_50_0_Value_65537": None,
+    "151_50_0_Value_65537": None,
+    "152_50_0_Value_65537": None,
+    "153_50_0_Value_65537": None,
+    "154_50_0_Value_65537": None,
+    "155_50_0_Value_65537": None,
+    "156_50_0_Value_65537": None,
+    "157_50_0_Value_65537": None,
+    "158_50_0_Value_65537": None,
+    "159_50_0_Value_65537": None,
+    "161_50_0_Value_65537": None,
+    "162_50_0_Value_65537": None,
+    "163_50_0_Value_65537": None,
+    "164_50_0_Value_65537": None,
+    "166_50_0_Value_65537": None,
+    "167_50_0_Value_65537": None,
+    "168_50_0_Value_65537": None,
+    "170_50_0_Value_65537": None,
+    "171_50_0_Value_65537": None,
+    "172_50_0_Value_65537": None,
+    "173_50_0_Value_65537": None,
+    "175_50_0_Value_65537": None,
+    "176_50_0_Value_65537": None,
+    "177_50_0_Value_65537": None,
+    "189_50_1_Value_65537": None,
+    "47_50_1_Value_65537": None,
+    "yieldtoday": None,
+    "yieldyesterday": None,
+    "yieldsincereset": None,
+    "energy": None,
+    "produced_energy": None,
+    "189_50_1_Value_65538": None,
+    "121_50_1_Value_65538": None
+}
+
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     try:
@@ -123,55 +178,85 @@ def on_message(client, userdata, msg):
                     if _date_key is None or _sensor_key is None:
                         continue
 
-                    # Jos sensorin id löytyy yhdestäkään listasta, jossa on
-                    # lueteltuna kulutusta indikoivien sensorien id:t,
-                    # lisätään value kaikkien kulutusta mittaavien sensoreiden
-                    # arvot kokoavaan tauluun:
-                    if sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_id:
-                        _total_consumptions_fact_query = text("INSERT INTO total_consumptions_fact (sensor_key, "
-                                                              "date_key, value) VALUES (:sensor_key, :date_key, "
-                                                              ":value)")
-                        _dw.execute(_total_consumptions_fact_query,
-                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                    # Jos viestin sensori kuuluu kulutusta ja tuottoa
+                    # mittaavien sensoreiden dictionaryyn ja jos sillä ei ole
+                    # dictionaryssa arvoa, lisätään arvo. Jos arvo on,
+                    # asetetaan sensorin epäkumulatiivista arvoa kuvaavan
+                    # muuttujan arvoksi nykyisessä ja edellisessä viestissä
+                    # tulleiden arvojen erotus. Epäkumulatiivinen arvo
+                    # lisätään ehtolauseiden määrittämään tauluun. Jos
+                    # sensori ei kuulu kulutusta ja tuottoa mittaavien
+                    # sensoreiden dictionaryyn, lisätään viestissä tullut
+                    # arvo measurements_fact-tauluun.
+                    if sensor_id_msg in consumptions_and_productions:
+                        if consumptions_and_productions[sensor_id_msg] is None:
+                            consumptions_and_productions[sensor_id_msg] = sensor_value
+                        else:
+                            noncumulative_sensor_value = sensor_value - consumptions_and_productions[sensor_id_msg]
+                            # Asetetaan erotuksen jälkeen dictionaryyn
+                            # sensorin arvoksi tässä viestissä tullut arvo:
+                            consumptions_and_productions[sensor_id_msg] = sensor_value
 
-                    # Jos sensorin id löytyy lights_id-listasta, lisätään
-                    # value lighting_consumptions_fact-tauluun:
-                    if sensor_id_msg in lights_ids:
-                        _lighting_consumptions_fact_query = text("INSERT INTO lighting_consumptions_fact (sensor_key, "
-                                                                 "date_key, value) VALUES (:sensor_key, :date_key, "
-                                                                 ":value)")
-                        _dw.execute(_lighting_consumptions_fact_query,
-                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
-                    # Jos sensorin id löytyy outlet_ids-listasta, lisätään
-                    # value outlets_consumptions_fact-tauluun:
-                    elif sensor_id_msg in outlet_ids:
-                        _outlets_consumptions_fact_query = text("INSERT INTO outlets_consumptions_fact (sensor_key, "
-                                                                "date_key, value) VALUES (:sensor_key, :date_key, "
-                                                                ":value)")
-                        _dw.execute(_outlets_consumptions_fact_query,
-                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
-                    # Jos sensorin id löytyy heater_id-listasta, lisätään
-                    # value heating_consumptions_fact-tauluun:
-                    elif sensor_id_msg in heater_id:
-                        _heating_consumptions_fact_query = text("INSERT INTO heating_consumptions_fact (sensor_key, "
-                                                                "date_key, value) VALUES (:sensor_key, :date_key, "
-                                                                ":value)")
-                        _dw.execute(_heating_consumptions_fact_query,
-                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
-                    # Jos sensorin id löytyy yhdestäkään listasta, jossa on
-                    # lueteltuna tuottoa indikoivien sensorien id:t,
-                    # lisätään value kaikkien tuottoa mittaavien sensoreiden
-                    # arvot kokoavaan tauluun:
-                    elif sensor_id_msg in solar_prod_ids or sensor_id_msg in inverter_prod_id or sensor_id_msg in wind_prod_id or sensor_id_msg in phase3_prod_ids:
-                        _productions_fact_query = text("INSERT INTO productions_fact (sensor_key, date_key, value) "
-                                                       "VALUES (:sensor_key, :date_key, :value)")
-                        _dw.execute(_productions_fact_query,
-                                    {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
-                    # Muussa tapauksessa lisätään value
-                    # measurements_fact-tauluun:
+                            # Jos sensorin id löytyy yhdestäkään listasta, jossa
+                            # luetellaan kulutusta indikoivien sensorien id:t,
+                            # lisätään value tauluun, joka kokoaa kaikkien
+                            # kulutusta mittaavien sensoreiden kulutusarvot:
+                            if sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_id:
+                                _total_consumptions_fact_query = text("INSERT INTO total_consumptions_fact ("
+                                                                      "sensor_key, date_key, value) VALUES ("
+                                                                      ":sensor_key, :date_key, :value)")
+                                _dw.execute(_total_consumptions_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
+
+                            # Jos sensorin id löytyy lights_id-listasta, lisätään
+                            # value lighting_consumptions_fact-tauluun:
+                            if sensor_id_msg in lights_ids:
+                                _lighting_consumptions_fact_query = text("INSERT INTO lighting_consumptions_fact ("
+                                                                         "sensor_key, date_key, value) VALUES ("
+                                                                         ":sensor_key, :date_key, :value)")
+                                _dw.execute(_lighting_consumptions_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
+                            # Jos sensorin id löytyy outlet_ids-listasta, lisätään
+                            # value outlets_consumptions_fact-tauluun:
+                            elif sensor_id_msg in outlet_ids:
+                                _outlets_consumptions_fact_query = text("INSERT INTO outlets_consumptions_fact ("
+                                                                        "sensor_key, date_key, value) VALUES ("
+                                                                        ":sensor_key, :date_key, :value)")
+                                _dw.execute(_outlets_consumptions_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
+                            # Jos sensorin id löytyy heater_id-listasta, lisätään
+                            # value heating_consumptions_fact-tauluun:
+                            elif sensor_id_msg in heater_id:
+                                _heating_consumptions_fact_query = text("INSERT INTO heating_consumptions_fact ("
+                                                                        "sensor_key, date_key, value) VALUES ("
+                                                                        ":sensor_key, :date_key, :value)")
+                                _dw.execute(_heating_consumptions_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
+                            # Jos sensorin id löytyy yhdestäkään listasta, jossa
+                            # luetellaan tuottoa indikoivien sensorien id:t,
+                            # lisätään value tauluun, joka kokoaa kaikkien
+                            # tuottoa mittaavien sensoreiden tuottoarvot:
+                            elif sensor_id_msg in solar_prod_ids or sensor_id_msg in inverter_prod_id or sensor_id_msg in wind_prod_id or sensor_id_msg in phase3_prod_ids:
+                                _productions_fact_query = text("INSERT INTO productions_fact (sensor_key, date_key, "
+                                                               "value) VALUES (:sensor_key, :date_key, :value)")
+                                _dw.execute(_productions_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
+                            # Muussa tapauksessa lisätään value
+                            # measurements_fact-tauluun:
+                            else:
+                                _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
+                                                               "value) VALUES (:sensor_key, :date_key, :value)")
+                                _dw.execute(_measurement_fact_query,
+                                            {"sensor_key": _sensor_key, "date_key": _date_key,
+                                             "value": noncumulative_sensor_value})
                     else:
-                        _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, value) "
-                                                       "VALUES (:sensor_key, :date_key, :value)")
+                        _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
+                                                       "value) VALUES (:sensor_key, :date_key, :value)")
                         _dw.execute(_measurement_fact_query,
                                     {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
                 _dw.commit()
