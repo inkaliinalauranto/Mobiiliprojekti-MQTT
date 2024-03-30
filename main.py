@@ -34,7 +34,7 @@ print(host + "\n")
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, reason_code, properties):
-    print(f"Connected with result code {reason_code}")
+    print(f"Connected with result code {reason_code}, date: {datetime.now()}")
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     # Topic, johon julkaisut tulevat:
@@ -69,7 +69,8 @@ def _get_sensor_key(msg_sensor_id, msg_device_id, sensors_from_dw):
     return None
 
 
-# Alustetaan dictionary, jota sensoreiden kumulatiivisten arvojen käsittelyssä:
+# Alustetaan dictionary, jota hyödynnetään sensoreiden kumulatiivisten
+# arvojen käsittelyssä:
 consumptions_and_productions = {
     "68_50_1_Value_65537": None,
     "68_50_2_Value_65537": None,
@@ -146,6 +147,8 @@ def on_message(client, userdata, msg):
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
                 dt = datetime.fromtimestamp(ts_in_sec)
 
+                # Tähän ehkä jokin silmukka, jolla tarkistetaan, löytyykö sama
+                # päivämäärä jo dates_dimistä.
                 _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
                                         ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
 
