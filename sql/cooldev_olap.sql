@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`total_consumptions_fact` (
   `sensor_key` INT NOT NULL,
   `date_key` INT NOT NULL,
   `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_total_consumptions_fact_sensors_dim_idx` (`sensor_key` ASC),
   PRIMARY KEY (`sensor_key`, `date_key`),
   INDEX `fk_total_consumptions_fact_dates_dim1_idx` (`date_key` ASC),
   CONSTRAINT `fk_total_consumptions_fact_sensors_dim1`
@@ -97,6 +98,7 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`productions_fact` (
   `sensor_key` INT NOT NULL,
   `date_key` INT NOT NULL,
   `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_productions__fact_sensors_dim_idx` (`sensor_key` ASC),
   PRIMARY KEY (`sensor_key`, `date_key`),
   INDEX `fk_productions_fact_dates_dim1_idx` (`date_key` ASC),
   CONSTRAINT `fk_productions_fact_sensors_dim1`
@@ -119,6 +121,7 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`heating_consumptions_fact` (
   `sensor_key` INT NOT NULL,
   `date_key` INT NOT NULL,
   `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_heating_consumptions_fact_sensors_dim_idx` (`sensor_key` ASC),
   PRIMARY KEY (`sensor_key`, `date_key`),
   INDEX `fk_heating_consumptions_fact_dates_dim1_idx` (`date_key` ASC),
   CONSTRAINT `fk_heating_consumptions_fact_sensors_dim1`
@@ -141,6 +144,7 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`lighting_consumptions_fact` (
   `sensor_key` INT NOT NULL,
   `date_key` INT NOT NULL,
   `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_lights_consumptions_fact_sensors_dim_idx` (`sensor_key` ASC),
   PRIMARY KEY (`sensor_key`, `date_key`),
   INDEX `fk_lights_consumptions_fact_dates_dim1_idx` (`date_key` ASC),
   CONSTRAINT `fk_lights_consumptions_fact_sensors_dim1`
@@ -163,6 +167,7 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`outlets_consumptions_fact` (
   `sensor_key` INT NOT NULL,
   `date_key` INT NOT NULL,
   `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_outlets_consumption_fact_sensors_dim_idx` (`sensor_key` ASC),
   PRIMARY KEY (`sensor_key`, `date_key`),
   INDEX `fk_outlets_consumption_fact_dates_dim1_idx` (`date_key` ASC),
   CONSTRAINT `fk_outlets_consumption_fact_sensors_dim1`
@@ -171,6 +176,30 @@ CREATE TABLE IF NOT EXISTS `cooldev_olap`.`outlets_consumptions_fact` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_outlets_consumption_fact_dates_dim1`
+    FOREIGN KEY (`date_key`)
+    REFERENCES `cooldev_olap`.`dates_dim` (`date_key`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+
+-- -----------------------------------------------------
+-- Table `cooldev_olap`.`temperatures_fact`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cooldev_olap`.`temperatures_fact` (
+  `sensor_key` INT NOT NULL,
+  `date_key` INT NOT NULL,
+  `value` FLOAT(10,3) NOT NULL,
+  INDEX `fk_temperatures_fact_sensors_dim_idx` (`sensor_key` ASC),
+  PRIMARY KEY (`sensor_key`, `date_key`),
+  INDEX `fk_temperatures_fact_dates_dim1_idx` (`date_key` ASC),
+  CONSTRAINT `fk_temperatures_sensors_dim1`
+    FOREIGN KEY (`sensor_key`)
+    REFERENCES `cooldev_olap`.`sensors_dim` (`sensor_key`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_temperatures_fact_dates_dim1`
     FOREIGN KEY (`date_key`)
     REFERENCES `cooldev_olap`.`dates_dim` (`date_key`)
     ON DELETE NO ACTION

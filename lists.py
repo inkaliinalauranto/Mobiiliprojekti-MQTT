@@ -1,4 +1,3 @@
-# tasainen arvo
 lights_ids = [
     "68_50_1_Value_65537",
     "68_50_2_Value_65537",
@@ -18,7 +17,6 @@ lights_ids = [
     "142_50_2_Value_65537"
 ]
 
-# tasainen arvo
 outlet_ids = [
     "148_50_0_Value_65537",
     "150_50_0_Value_65537",
@@ -47,35 +45,25 @@ outlet_ids = [
     "177_50_0_Value_65537"
 ]
 
-total_consumption = [
-    "189_50_1_Value_65537"
+heater_ids = [
+    "47_50_1_Value_65537",      # Floorheating 1
+    "47_50_2_Value_65537"       # Floorheating 2
 ]
 
-# lisääntyvä arvo
-heater_id = [
-    "47_50_1_Value_65537",
-
+total_production_ids = [
+    "produced_energy",          # Wind
+    "yieldtoday"                # Solar
 ]
 
-# en saanut arvoja
-solar_prod_ids = [
-    "yieldtoday",
-    "yieldyesterday",
-    "yieldsincereset"
+total_consumption_ids = [
+    "189_50_1_Value_65537",     # TB_3Phase
+    "energy"                    # Inverter
 ]
 
-# en saanut arvoja
-inverter_prod_id = [
-    "energy"
-]
-
-# en saanut arvoja
-wind_prod_id = [
-    "produced_energy"
-]
-
-# en saanut arvoja
-phase3_prod_ids = [
-    "189_50_1_Value_65538",
-    "121_50_1_Value_65538"
+temperature_ids = [
+    "52_49_0_AirTemperature",   # Outdoors (wall)
+    "190_49_0_AirTemperature",  # Outdoors (mast) <- Ehkä tarkempi
+    "144_49_0_AirTemperature",  # Indoors TB
+    "35_49_0_AirTemperature",   # Indoors WC
+    "145_49_0_AirTemperature"   # Indoors
 ]
