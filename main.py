@@ -149,6 +149,8 @@ def on_message(client, userdata, msg):
 
                 # Tähän ehkä jokin silmukka, jolla tarkistetaan, löytyykö sama
                 # päivämäärä jo dates_dimistä.
+                # Esim. SELECT date_key FROM dates_dim WHERE year = dt.year, month = dt.month ….
+                # Jos ei palauta mitään, vain siinä tapauksessa lisättäisiin dt
                 _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
                                         ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
 
