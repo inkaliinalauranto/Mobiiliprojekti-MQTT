@@ -72,6 +72,7 @@ def _get_sensor_key(msg_sensor_id, msg_device_id, sensors_from_dw):
 # Alustetaan dictionary, jota hyödynnetään sensoreiden kumulatiivisten
 # arvojen käsittelyssä:
 consumptions_and_productions = {
+    # Lights
     "68_50_1_Value_65537": None,
     "68_50_2_Value_65537": None,
     "71_50_1_Value_65537": None,
@@ -88,7 +89,7 @@ consumptions_and_productions = {
     "141_50_2_Value_65537": None,
     "142_50_1_Value_65537": None,
     "142_50_2_Value_65537": None,
-
+    # Outlets
     "148_50_0_Value_65537": None,
     "150_50_0_Value_65537": None,
     "151_50_0_Value_65537": None,
@@ -114,17 +115,15 @@ consumptions_and_productions = {
     "175_50_0_Value_65537": None,
     "176_50_0_Value_65537": None,
     "177_50_0_Value_65537": None,
-
+    # Heating
     "47_50_1_Value_65537": None,
     "47_50_2_Value_65537": None,
-
+    # Production
     "produced_energy": None,
     "yieldtoday": None,
-
+    # Total Consumption
     "189_50_1_Value_65537": None,
-    "energy": None,
-
-    "121_50_1_Value_65538": None
+    "energy": None
 }
 
 

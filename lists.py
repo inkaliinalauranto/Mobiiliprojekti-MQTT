@@ -55,6 +55,11 @@ total_production_ids = [
     "yieldtoday"                # Solar
 ]
 
+# Ei laiteta näitä total_consumptions_fact tauluun,
+# koska näiden yhteenlaskettu summa on se mitä koko coolboxi käyttää.
+# Tällä hetkellä lasketaan kaikki muut kulutukset yhteen.
+# Summa heittää jonkun verran, koska sitä virtaa menee muuallekkin kuin valoihin, lämmitykseen, pistorasioihin
+# Voidaan tehdä tarvittaessa oma fact_taulu näille
 total_consumption_ids = [
     "189_50_1_Value_65537",     # TB_3Phase
     "energy"                    # Inverter
