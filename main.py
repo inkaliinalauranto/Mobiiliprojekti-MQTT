@@ -41,6 +41,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe(topic)
 
 
+# EI KÄYTÖSSÄ (vanha _get_date_key() käytti tätä)
 def _get_dates_dim(_dw):
     _query = text("SELECT * FROM dates_dim;")
     rows = _dw.execute(_query).mappings().all()
@@ -53,12 +54,38 @@ def _get_sensors_dim(_dw):
     return rows
 
 
-def _get_date_key(msg_dt, dates):
+# VANHA date_key getter
+def _get_date_key_old(msg_dt, dates):
     for d_dim in dates:
         if msg_dt.year == d_dim["year"] and msg_dt.month == d_dim["month"] and msg_dt.isocalendar().week == d_dim[
             "week"] and msg_dt.day == d_dim["day"] and msg_dt.hour == d_dim["hour"] and msg_dt.minute == d_dim[
             "min"] and msg_dt.second == d_dim["sec"] and msg_dt.microsecond == d_dim["ms"]:
             return d_dim["date_key"]
+    return None
+
+
+# UUSI date_key getter
+def _get_date_key(_dw, msg_dt):
+    _query = text("SELECT date_key FROM dates_dim d "
+                  "WHERE d.year = :year AND d.month = :month AND d.day = :day "
+                  "AND d.hour = :hour AND d.min = :min AND d.sec = :sec AND d.ms = :ms;")
+
+    rows = _dw.execute(
+        _query,
+        {
+            "year": msg_dt.year,
+            "month": msg_dt.month,
+            "day": msg_dt.day,
+            "hour": msg_dt.hour,
+            "min": msg_dt.minute,
+            "sec": msg_dt.second,
+            "ms": msg_dt.microsecond
+        }
+    ).mappings().all()
+
+    if rows:
+        return rows[0]['date_key']
+
     return None
 
 
@@ -177,9 +204,9 @@ def on_message(client, userdata, msg):
                 for sensor_id_msg in sensor_ids_msg:
                     # print(sensor_id_msg)
                     sensor_value = sensor_data[sensor_id_msg]['v']
-                    dates_dim = _get_dates_dim(_dw)
+                    #dates_dim = _get_dates_dim(_dw)                # Poistettu käytöstä
                     sensors_dim = _get_sensors_dim(_dw)
-                    _date_key = _get_date_key(dt, dates_dim)
+                    _date_key = _get_date_key(_dw, dt)
                     _sensor_key = _get_sensor_key(sensor_id_msg, device_id_msg, sensors_dim)
 
                     if _date_key is None or _sensor_key is None:
