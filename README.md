@@ -2,7 +2,7 @@
 ## Tietokanta
 - Tämä MQTT-softa toimii seuraavaa fyysistä mallia noudattavan tietokannan kanssa:
 
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 - Voit kopioida testitietokantarakenteen esimerkiksi seuraavasti:
 1) Käynnistä XAMPP ja navigoi phpMyAdminiin 
