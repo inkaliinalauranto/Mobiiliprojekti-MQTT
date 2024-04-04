@@ -175,17 +175,11 @@ def on_message(client, userdata, msg):
                 # Muunnetaan sekuntimuotoinen epoch päivämääräksi.
                 dt = datetime.fromtimestamp(ts_in_sec)
 
-                # Tähän ehkä jokin silmukka, jolla tarkistetaan, löytyykö sama
-                # päivämäärä jo dates_dimistä.
-                # Esim. SELECT date_key FROM dates_dim WHERE year = dt.year, month = dt.month ….
-                # Jos ei palauta mitään, vain siinä tapauksessa lisättäisiin dt
-                _dates_dim_query = text('INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
-                                        ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
-
-                # Irroitetaan päivämäärän eri osat pistenotaation avulla:
-                _dw.execute(_dates_dim_query,
-                            {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week, 'day': dt.day,
-                             'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
+                # Alustetaan query, joka toteutetaan myöhemmin ehtolauseiden
+                # perusteella:
+                _dates_dim_query = text(
+                    'INSERT INTO dates_dim (year, month, week, day, hour, min, sec, ms) VALUES ('
+                    ':year, :month, :week, :day, :hour, :min, :sec, :ms)')
 
                 # Haetaan tietosisällöstä laitteen nimi/id hakemalla
                 # viesti-dictionaryn d-avaimen arvona olevan dictionaryn avaimen
@@ -204,15 +198,10 @@ def on_message(client, userdata, msg):
                 # sensoreiden arvot silmukassa. Lisätään samalla kunkin
                 # sensorin tiedot tietokantaan.
                 for sensor_id_msg in sensor_ids_msg:
-                    # print(sensor_id_msg)
                     sensor_value = sensor_data[sensor_id_msg]['v']
                     #dates_dim = _get_dates_dim(_dw)                # Poistettu käytöstä
                     sensors_dim = _get_sensors_dim(_dw)
-                    _date_key = _get_date_key(_dw, dt)
                     _sensor_key = _get_sensor_key(sensor_id_msg, device_id_msg, sensors_dim)
-
-                    if _date_key is None or _sensor_key is None:
-                        continue
 
                     # Jos viestin sensori kuuluu kulutusta ja tuottoa
                     # mittaavien sensoreiden dictionaryyn ja jos sillä ei ole
@@ -220,14 +209,35 @@ def on_message(client, userdata, msg):
                     # asetetaan sensorin epäkumulatiivista arvoa kuvaavan
                     # muuttujan arvoksi nykyisessä ja edellisessä viestissä
                     # tulleiden arvojen erotus. Epäkumulatiivinen arvo
-                    # lisätään ehtolauseiden määrittämään tauluun. Jos
-                    # sensori ei kuulu kulutusta ja tuottoa mittaavien
+                    # lisätään ehtolauseiden määrittämään tauluun.
+                    #
+                    # Jos sensori ei kuulu kulutusta ja tuottoa mittaavien
                     # sensoreiden dictionaryyn, lisätään viestissä tullut
-                    # arvo measurements_fact-tauluun.
+                    # arvo joko temperatures_fact tai
+                    # measurements_fact-tauluun. Ennen arvon lisäämistä
+                    # tauluun, lisätään sen aikaleima dates_dim-tauluun.
+                    # Arvo lisätään tauluun vain jos jokin yllä mainituista
+                    # erittelyehdoista toteutuu ja jos sille on olemassa
+                    # date_key ja sensor_key.
+
                     if sensor_id_msg in consumptions_and_productions:
                         if consumptions_and_productions[sensor_id_msg] is None:
                             consumptions_and_productions[sensor_id_msg] = sensor_value
+                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
+                            #       f"ON listassa mutta EI arvoa -> ei lisätä tietokantaan.")
                         else:
+                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
+                            #       f"ON listassa -> lisätään tietokantaan.")
+
+                            # Lisätään viestin aikaleima dates_dim-tauluun:
+                            _dw.execute(_dates_dim_query,
+                                        {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week,
+                                         'day': dt.day,
+                                         'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
+
+                            # Haetaan viestin date_key dates_dim-taulusta:
+                            _date_key = _get_date_key(_dw, dt)
+
                             noncumulative_sensor_value = sensor_value - consumptions_and_productions[sensor_id_msg]
                             # Asetetaan erotuksen jälkeen dictionaryyn
                             # sensorin arvoksi tässä viestissä tullut arvo:
@@ -237,7 +247,7 @@ def on_message(client, userdata, msg):
                             # luetellaan kulutusta indikoivien sensorien id:t,
                             # lisätään value tauluun, joka kokoaa kaikkien
                             # kulutusta mittaavien sensoreiden kulutusarvot:
-                            if sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_ids:
+                            if (sensor_id_msg in lights_ids or sensor_id_msg in outlet_ids or sensor_id_msg in heater_ids) and _date_key is not None and _sensor_key is not None:
                                 _total_consumptions_fact_query = text("INSERT INTO total_consumptions_fact ("
                                                                       "sensor_key, date_key, value) VALUES ("
                                                                       ":sensor_key, :date_key, :value)")
@@ -247,7 +257,7 @@ def on_message(client, userdata, msg):
 
                             # Jos sensorin id löytyy lights_id-listasta, lisätään
                             # value lighting_consumptions_fact-tauluun:
-                            if sensor_id_msg in lights_ids:
+                            if (sensor_id_msg in lights_ids) and _date_key is not None and _sensor_key is not None:
                                 _lighting_consumptions_fact_query = text("INSERT INTO lighting_consumptions_fact ("
                                                                          "sensor_key, date_key, value) VALUES ("
                                                                          ":sensor_key, :date_key, :value)")
@@ -257,7 +267,7 @@ def on_message(client, userdata, msg):
 
                             # Jos sensorin id löytyy outlet_ids-listasta, lisätään
                             # value outlets_consumptions_fact-tauluun:
-                            elif sensor_id_msg in outlet_ids:
+                            elif sensor_id_msg in outlet_ids and _date_key is not None and _sensor_key is not None:
                                 _outlets_consumptions_fact_query = text("INSERT INTO outlets_consumptions_fact ("
                                                                         "sensor_key, date_key, value) VALUES ("
                                                                         ":sensor_key, :date_key, :value)")
@@ -267,7 +277,7 @@ def on_message(client, userdata, msg):
 
                             # Jos sensorin id löytyy heater_id-listasta, lisätään
                             # value heating_consumptions_fact-tauluun:
-                            elif sensor_id_msg in heater_ids:
+                            elif sensor_id_msg in heater_ids and _date_key is not None and _sensor_key is not None:
                                 _heating_consumptions_fact_query = text("INSERT INTO heating_consumptions_fact ("
                                                                         "sensor_key, date_key, value) VALUES ("
                                                                         ":sensor_key, :date_key, :value)")
@@ -278,7 +288,7 @@ def on_message(client, userdata, msg):
                             # luetellaan tuottoa indikoivien sensorien id:t,
                             # lisätään value tauluun, joka kokoaa kaikkien
                             # tuottoa mittaavien sensoreiden tuottoarvot:
-                            elif sensor_id_msg in total_production_ids:
+                            elif sensor_id_msg in total_production_ids and _date_key is not None and _sensor_key is not None:
                                 _productions_fact_query = text("INSERT INTO productions_fact (sensor_key, date_key, "
                                                                "value) VALUES (:sensor_key, :date_key, :value)")
                                 _dw.execute(_productions_fact_query,
@@ -287,29 +297,49 @@ def on_message(client, userdata, msg):
 
                             # Total consumption voidaan laskea myös inverter + tb_3phasen consumptionien summasta.
                             # Laitetaan ne measurementsiin jos halutaankin käyttää sitä.
-                            elif sensor_id_msg in total_consumption_ids:
+                            elif sensor_id_msg in total_consumption_ids and _date_key is not None and _sensor_key is not None:
                                 _measurements_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
-                                                               "value) VALUES (:sensor_key, :date_key, :value)")
+                                                                "value) VALUES (:sensor_key, :date_key, :value)")
                                 _dw.execute(_measurements_fact_query,
                                             {"sensor_key": _sensor_key, "date_key": _date_key,
                                              "value": noncumulative_sensor_value})
 
                     else:
-                        # Jos sensorin id löytyy temperatures listasta,
-                        # se sijoitetaan temperatures_fact-tauluun
-                        if sensor_id_msg in temperature_ids:
+                        # Jos sensorin id löytyy temperature_ids- tai
+                        # battery_ids-listoista, lisätään viestin aikaleima
+                        # dates_dim-tauluun ja haetaan saman tien viestin
+                        # _date_key dates_dim-taulusta:
+                        if sensor_id_msg in temperature_ids or sensor_id_msg in battery_ids:
+                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} ON "
+                            #       f"listassa -> lisätään tietokantaan.")
 
+                            # Irroitetaan päivämäärän eri osat pistenotaation avulla:
+                            _dw.execute(_dates_dim_query,
+                                        {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week,
+                                         'day': dt.day,
+                                         'hour': dt.hour, 'min': dt.minute, 'sec': dt.second, 'ms': dt.microsecond})
+
+                            _date_key = _get_date_key(_dw, dt)
+
+                        # Jos sensorin id löytyy temperatures listasta,
+                        # sen arvo sijoitetaan temperatures_fact-tauluun,
+                        # kunhan sille on olemassa _date_key ja _sensor_key:
+                        if sensor_id_msg in temperature_ids and _date_key is not None and _sensor_key is not None:
                             _temperatures_fact_query = text("INSERT INTO temperatures_fact (sensor_key, date_key, "
                                                             "value) VALUES (:sensor_key, :date_key, :value)")
                             _dw.execute(_temperatures_fact_query,
                                         {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
 
                         # Laitetaan battery id:t measurementsiin
-                        elif sensor_id_msg in battery_ids:
+                        elif sensor_id_msg in battery_ids and _date_key is not None and _sensor_key is not None:
                             _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
                                                            "value) VALUES (:sensor_key, :date_key, :value)")
                             _dw.execute(_measurement_fact_query,
                                         {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+                        else:
+                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
+                            #       f"EI listassa -> ei lisätä tietokantaan.")
+                            continue
 
                 _dw.commit()
 
