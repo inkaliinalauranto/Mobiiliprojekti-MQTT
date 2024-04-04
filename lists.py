@@ -18,6 +18,8 @@ lights_ids = [
 ]
 
 outlet_ids = [
+    "53_50_0_Value_65537",
+    "54_50_0_Value_65537",
     "148_50_0_Value_65537",
     "150_50_0_Value_65537",
     "151_50_0_Value_65537",
@@ -66,9 +68,13 @@ total_consumption_ids = [
 ]
 
 temperature_ids = [
-    "52_49_0_AirTemperature",   # Outdoors (wall)
-    "190_49_0_AirTemperature",  # Outdoors (mast) <- Ehkä tarkempi
+    "190_49_0_AirTemperature",  # Outdoors (mast)
     "144_49_0_AirTemperature",  # Indoors TB
     "35_49_0_AirTemperature",   # Indoors WC
-    "145_49_0_AirTemperature"   # Indoors
+    "145_49_0_AirTemperature",  # Indoors
+    "193_49_0_AirTemperature"   # Floor
+]
+
+battery_ids = [
+    "soc"
 ]

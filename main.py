@@ -117,6 +117,8 @@ consumptions_and_productions = {
     "142_50_1_Value_65537": None,
     "142_50_2_Value_65537": None,
     # Outlets
+    "53_50_0_Value_65537": None,
+    "54_50_0_Value_65537": None,
     "148_50_0_Value_65537": None,
     "150_50_0_Value_65537": None,
     "151_50_0_Value_65537": None,
@@ -283,14 +285,15 @@ def on_message(client, userdata, msg):
                                             {"sensor_key": _sensor_key, "date_key": _date_key,
                                              "value": noncumulative_sensor_value})
 
-                            # Muussa tapauksessa lisätään value
-                            # measurements_fact-tauluun:
-                            else:
-                                _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
+                            # Total consumption voidaan laskea myös inverter + tb_3phasen consumptionien summasta.
+                            # Laitetaan ne measurementsiin jos halutaankin käyttää sitä.
+                            elif sensor_id_msg in total_consumption_ids:
+                                _measurements_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
                                                                "value) VALUES (:sensor_key, :date_key, :value)")
-                                _dw.execute(_measurement_fact_query,
+                                _dw.execute(_measurements_fact_query,
                                             {"sensor_key": _sensor_key, "date_key": _date_key,
                                              "value": noncumulative_sensor_value})
+
                     else:
                         # Jos sensorin id löytyy temperatures listasta,
                         # se sijoitetaan temperatures_fact-tauluun
@@ -301,13 +304,13 @@ def on_message(client, userdata, msg):
                             _dw.execute(_temperatures_fact_query,
                                         {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
 
-                        # Muussa tapauksessa lisätään value
-                        # measurements_fact-tauluun:
-                        else:
+                        # Laitetaan battery id:t measurementsiin
+                        elif sensor_id_msg in battery_ids:
                             _measurement_fact_query = text("INSERT INTO measurements_fact (sensor_key, date_key, "
                                                            "value) VALUES (:sensor_key, :date_key, :value)")
                             _dw.execute(_measurement_fact_query,
                                         {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
+
                 _dw.commit()
 
             except Exception as e1:
