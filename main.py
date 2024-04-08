@@ -202,6 +202,7 @@ def on_message(client, userdata, msg):
                     #dates_dim = _get_dates_dim(_dw)                # Poistettu käytöstä
                     sensors_dim = _get_sensors_dim(_dw)
                     _sensor_key = _get_sensor_key(sensor_id_msg, device_id_msg, sensors_dim)
+                    _date_key = None
 
                     # Jos viestin sensori kuuluu kulutusta ja tuottoa
                     # mittaavien sensoreiden dictionaryyn ja jos sillä ei ole
@@ -223,11 +224,23 @@ def on_message(client, userdata, msg):
                     if sensor_id_msg in consumptions_and_productions:
                         if consumptions_and_productions[sensor_id_msg] is None:
                             consumptions_and_productions[sensor_id_msg] = sensor_value
-                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
-                            #       f"ON listassa mutta EI arvoa -> ei lisätä tietokantaan.")
                         else:
-                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
-                            #       f"ON listassa -> lisätään tietokantaan.")
+                            # Sensorin epäkumulatiivinen arvo saadaan
+                            # laskemalla sen uuden ja edellisen arvon
+                            # erotus.
+                            noncumulative_sensor_value = sensor_value - consumptions_and_productions[sensor_id_msg]
+                            # Asetetaan sensorin arvoksi dictionaryyn
+                            # viestissä tullut uusi arvo.
+                            consumptions_and_productions[sensor_id_msg] = sensor_value
+
+                            # Jos epäkumulatiivinen arvo on negatiivinen,
+                            # viestin tietoja ei lisätä tietokantaan.
+                            # Negatiivinen arvo indikoi nollattua sensoria,
+                            # jonka uusi epäkumulatiivinen arvo voidaan
+                            # laskea sensorin seuraavasta viestistä, sillä
+                            # 0-arvo on otettu ylemmällä rivillä talteen.
+                            if noncumulative_sensor_value < 0:
+                                continue
 
                             # Lisätään viestin aikaleima dates_dim-tauluun:
                             _dw.execute(_dates_dim_query,
@@ -237,11 +250,6 @@ def on_message(client, userdata, msg):
 
                             # Haetaan viestin date_key dates_dim-taulusta:
                             _date_key = _get_date_key(_dw, dt)
-
-                            noncumulative_sensor_value = sensor_value - consumptions_and_productions[sensor_id_msg]
-                            # Asetetaan erotuksen jälkeen dictionaryyn
-                            # sensorin arvoksi tässä viestissä tullut arvo:
-                            consumptions_and_productions[sensor_id_msg] = sensor_value
 
                             # Jos sensorin id löytyy yhdestäkään listasta, jossa
                             # luetellaan kulutusta indikoivien sensorien id:t,
@@ -310,10 +318,6 @@ def on_message(client, userdata, msg):
                         # dates_dim-tauluun ja haetaan saman tien viestin
                         # _date_key dates_dim-taulusta:
                         if sensor_id_msg in temperature_ids or sensor_id_msg in battery_ids:
-                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} ON "
-                            #       f"listassa -> lisätään tietokantaan.")
-
-                            # Irroitetaan päivämäärän eri osat pistenotaation avulla:
                             _dw.execute(_dates_dim_query,
                                         {'year': dt.year, 'month': dt.month, 'week': dt.isocalendar().week,
                                          'day': dt.day,
@@ -337,8 +341,6 @@ def on_message(client, userdata, msg):
                             _dw.execute(_measurement_fact_query,
                                         {"sensor_key": _sensor_key, "date_key": _date_key, "value": sensor_value})
                         else:
-                            # print(f"Sensori {sensor_id_msg} aikaleimalla {dt} arvolla {sensor_value} "
-                            #       f"EI listassa -> ei lisätä tietokantaan.")
                             continue
 
                 _dw.commit()
